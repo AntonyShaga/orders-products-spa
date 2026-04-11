@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider     = "prisma-client"
+  output       = "../generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  title       String
+  date        DateTime
+  description String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products Product[]
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  serialNumber  Int
+  isNew         Boolean
+  photo         String
+  title         String
+  type          String
+  specification String
+  date          DateTime
+
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id])
+
+  guaranteeStart DateTime
+  guaranteeEnd   DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  prices Price[]
+}
+
+model Price {
+  id        String  @id @default(cuid())
+  value     Float
+  symbol    String
+  isDefault Boolean
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastLogin DateTime?
+
+  refreshTokens RefreshToken[]
+}
+
+model RefreshToken {
+  id    String @id @default(cuid())
+  token String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
