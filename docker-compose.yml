@@ -1,0 +1,42 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: nexus-postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nexus
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    container_name: nexus-backend
+    restart: always
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    env_file:
+      - ./backend/.env
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nexus
+    command: npm run start
+
+  frontend:
+    build: ./frontend
+    container_name: nexus-frontend
+    restart: always
+    ports:
+      - "3001:3000"
+    depends_on:
+      - backend
+    env_file:
+      - ./frontend/.env
+    command: npm run start
+
+volumes:
+  postgres_data:
