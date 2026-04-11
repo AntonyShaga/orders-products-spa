@@ -1,0 +1,158 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.app__layout {
+  width: min(100%, var(--layout-max));
+  margin-inline: auto;
+
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  grid-template-rows: var(--header-height) 1fr;
+
+  height: 100vh;
+}
+
+.app__header {
+  grid-column: 1 / -1;
+
+  display: grid;
+  grid-template-columns: var(--sidebar-width) 1fr;
+  align-items: center;
+
+  background: var(--color-white);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.app__header-content {
+  grid-column: 2;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 0 40px;
+}
+
+.app__logo {
+  font-weight: bold;
+  color: var(--color-accent);
+}
+
+.app__sidebar {
+  grid-row: 2;
+
+  background: var(--color-white);
+  box-shadow: 1px 0 6px rgba(0, 0, 0, 0.04);
+
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 40px;
+}
+
+.app__content {
+  grid-row: 2;
+
+  background: var(--color-bg);
+  overflow-y: auto;
+}
+
+.app__content-inner {
+  padding: 40px;
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --sidebar-width: 240px;
+  }
+
+  .app__content-inner {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 992px) {
+  .app__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .app__sidebar {
+    display: none;
+  }
+
+  .app__header {
+    grid-template-columns: 1fr;
+  }
+
+  .app__header-content {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .app__content-inner {
+    padding: 20px;
+  }
+
+  .app__header-content {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .app__header-content {
+    padding: 0 12px;
+  }
+}
+.page-loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(2px);
+
+  animation: fadePulse 1.2s infinite;
+  z-index: 999;
+}
+
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}

@@ -1,0 +1,22 @@
+.sessions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sessions__info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.sessions__label {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.sessions__count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text);
+}

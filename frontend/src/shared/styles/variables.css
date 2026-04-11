@@ -1,0 +1,41 @@
+:root {
+  /* layout */
+  --header-height: 80px;
+  --sidebar-width: 240px;
+  --layout-max: 1600px;
+
+  /* colors (light) */
+  --color-bg: #f4f7f9;
+  --color-surface: #ffffff;
+  --color-border: #eeeeee;
+  --color-text: #171717;
+
+  --color-accent: #8bc34a;
+
+  /* NEW (из top-menu) */
+  --color-logo-bg: #7ac943;
+  --color-logo-text: #7ac943;
+
+  /* semantic */
+  --bg: var(--color-bg);
+  --text: var(--color-text);
+  --color-text-secondary: #777;
+  --color-danger: #e46a6a;
+}
+
+:root[data-theme='dark'] {
+  --color-bg: #1e1e1e;
+  --color-surface: #2a2a2a;
+  --color-border: #3a3a3a;
+  --color-text: #ffffff;
+
+  --color-accent: #8bc34a;
+
+  --color-logo-bg: #7ac943;
+  --color-logo-text: #7ac943;
+
+  --bg: var(--color-bg);
+  --text: var(--color-text);
+  --color-text-secondary: #aaa;
+  --color-danger: #e46a6a;
+}

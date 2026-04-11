@@ -1,0 +1,26 @@
+.order-list {
+  display: grid;
+  grid-template-columns: 1fr;
+
+  gap: 16px;
+  padding: 10px;
+
+  min-height: 100vh;
+
+  background: var(--color-bg);
+
+  transition: grid-template-columns 0.3s ease;
+}
+
+.order-list--open {
+  grid-template-columns: 40% 60%;
+}
+
+.order-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  overflow-y: auto;
+  transition: transform 0.3s ease;
+}

@@ -1,0 +1,32 @@
+.clock {
+  display: flex;
+  align-items: flex-end; /* ← ВОТ ГЛАВНОЕ */
+  gap: 16px;
+}
+
+.clock__date {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  font-size: 12px;
+}
+
+.clock__label {
+  color: var(--color-text-secondary);
+}
+
+.clock__time {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  color: var(--color-text);
+}
+
+.clock__icon {
+  font-size: 12px;
+}
