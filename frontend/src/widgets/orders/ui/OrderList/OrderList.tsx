@@ -1,37 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/providers/store-provider'
-import { setSelectedOrder, setOrders } from '@/entities/order/model/orderSlice'
-import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
-import { selectOrderTotal } from '@/entities/order/model/selectors'
+import { setSelectedOrder } from '@/entities/order/model/orderSlice'
+
+import { selectOrdersWithTotals } from '@/entities/order/model/selectors'
 import { OrderCard } from '@/widgets/orders/ui/OrderCard/OrderCard'
 import { OrderDetails } from '@/widgets/orders/ui/OrderDetails/OrderDetails'
 import { Order } from '@/entities/order/model/types'
-
 import './OrderList.css'
+import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
 
-interface OrderListProps {
-  initialOrders: Order[]
-}
-
-export const OrderList = ({ initialOrders }: OrderListProps) => {
+export const OrderList = () => {
   const dispatch = useAppDispatch()
 
-  const { orders, selectedOrderId } = useSelector((state: RootState) => state.orders)
+  const ordersWithTotals = useSelector(selectOrdersWithTotals)
+  const selectedOrderId = useSelector((state: RootState) => state.orders.selectedOrderId)
 
-  const selectedOrder = orders.find((o) => o.id === selectedOrderId)
+  const selectedOrder = ordersWithTotals.find((o) => o.id === selectedOrderId)
 
   const [closingOrder, setClosingOrder] = useState<Order | null>(null)
   const visibleOrder = selectedOrder ?? closingOrder
   const isDetailsShown = Boolean(selectedOrder || closingOrder)
-
-  useEffect(() => {
-    if (orders.length === 0 && initialOrders?.length) {
-      dispatch(setOrders(initialOrders))
-    }
-  }, [initialOrders, orders.length, dispatch])
 
   const handleCloseDetails = () => {
     if (!selectedOrder) return
@@ -46,16 +37,14 @@ export const OrderList = ({ initialOrders }: OrderListProps) => {
   return (
     <section className={`order-list ${isDetailsShown ? 'order-list--open' : ''}`}>
       <div className="order-list__items">
-        {orders.map((order) => {
-          const total = selectOrderTotal({ orders: { orders } } as RootState, order.id)
-
+        {ordersWithTotals.map((order) => {
           return (
             <OrderCard
               key={order.id}
               order={order}
               isSelected={selectedOrderId === order.id}
               isCompact={isDetailsShown}
-              total={total}
+              total={order.total}
               onSelect={() => dispatch(setSelectedOrder(order.id))}
             />
           )
