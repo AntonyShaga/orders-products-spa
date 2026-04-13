@@ -17,6 +17,7 @@ export default async function MainLayout({
   const dict = await getDictionary(locale as Locale)
   const cookieStore = await cookies()
   const isAuth = Boolean(cookieStore.get('accessToken'))
+
   return (
     <div className="app__layout">
       <header className="app__header">

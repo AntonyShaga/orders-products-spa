@@ -2,22 +2,20 @@
 
 import { useMemo, useState } from 'react'
 import { formatDateLong, formatDateShort } from '@/widgets/orders/ui/helpers'
-import { Order } from '@/entities/order/model/types'
+
 import {
   filterProducts,
   getProductTypes,
   mapOrdersToProducts,
 } from '@/widgets/products/model/utils'
 import './Products.css'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/providers/store-provider'
 
-interface ProductsPageProps {
-  initialOrders: Order[]
-}
-
-export const ProductsPage = ({ initialOrders }: ProductsPageProps) => {
+export const ProductsPage = () => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
-
-  const products = useMemo(() => mapOrdersToProducts(initialOrders), [initialOrders])
+  const { orders } = useSelector((state: RootState) => state.orders)
+  const products = useMemo(() => mapOrdersToProducts(orders), [orders])
   const types = useMemo(() => getProductTypes(products), [products])
   const filteredProducts = useMemo(
     () => filterProducts(products, selectedType),
