@@ -32,20 +32,21 @@ jobs:
           script: |
             if [ "${{ github.ref_name }}" = "staging" ]; then
               APP_DIR=~/orders-products-staging
+
+              echo "${{ secrets.BACKEND_ENV_STAGING }}" > $APP_DIR/backend/.env
+              echo "${{ secrets.FRONTEND_ENV_STAGING }}" > $APP_DIR/frontend/.env
+
             else
               APP_DIR=~/orders-products-spa
+
+              echo "${{ secrets.BACKEND_ENV_PROD }}" > $APP_DIR/backend/.env
+              echo "${{ secrets.FRONTEND_ENV_PROD }}" > $APP_DIR/frontend/.env
             fi
 
             mkdir -p $APP_DIR
             cp -r ~/temp-deploy/* $APP_DIR/
 
             cd $APP_DIR
-
-            # backend env
-            echo "${{ secrets.BACKEND_ENV }}" > backend/.env
-
-            # frontend env
-            echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
 
             docker-compose down || true
 
