@@ -41,13 +41,9 @@ export const RegisterForm = ({ dict }: Props) => {
     try {
       const result = await register(email, password)
 
-      if (!result.success) {
-        // 🔥 тут используем словарь
-        if (result.error === 'user exists') {
-          setError(dict.userExists)
-        } else {
-          setError(result.error || dict.unexpectedError)
-        }
+      if (result.error) {
+        setError(result.error || dict.invalidCredentials)
+        setLoading(false)
         return
       }
 

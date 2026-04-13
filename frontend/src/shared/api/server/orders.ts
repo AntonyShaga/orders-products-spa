@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 
 const BASE = process.env.INTERNAL_API_URL
 
-export const fetchOrders = async () => {
+export async function serverFetch<T>(path: string) {
   try {
     const cookieStore = await cookies()
 
@@ -11,7 +11,7 @@ export const fetchOrders = async () => {
       .map((c) => `${c.name}=${c.value}`)
       .join('; ')
 
-    const res = await fetch(`${BASE}/orders`, {
+    const res = await fetch(`${BASE}${path}`, {
       headers: {
         Cookie: cookie,
       },
@@ -26,8 +26,7 @@ export const fetchOrders = async () => {
       return { data: null, error: 'error' }
     }
 
-    const data = await res.json()
-    return { data, error: null }
+    return { data: await res.json(), error: null }
   } catch {
     return { data: null, error: 'network' }
   }
