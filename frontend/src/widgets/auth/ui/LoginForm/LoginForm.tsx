@@ -5,7 +5,9 @@ import { useParams, useRouter } from 'next/navigation'
 import './LoginForm.css'
 import Link from 'next/link'
 import { AuthDictionary } from '@/shared'
-import { login } from '@/shared/api/client'
+import { getOrders, login } from '@/shared/api/client'
+import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
+import { setOrders } from '@/entities/order/model/orderSlice'
 
 type Props = {
   dict: AuthDictionary
@@ -14,6 +16,7 @@ type Props = {
 export const LoginForm = ({ dict }: Props) => {
   const router = useRouter()
   const { locale } = useParams<{ locale: string }>()
+  const dispatch = useAppDispatch()
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -44,6 +47,12 @@ export const LoginForm = ({ dict }: Props) => {
       setError(result.error || dict.invalidCredentials)
       setLoading(false)
       return
+    }
+
+    const ordersRes = await getOrders()
+
+    if (ordersRes.data) {
+      dispatch(setOrders(ordersRes.data))
     }
 
     router.push(`/${locale}/orders`)
