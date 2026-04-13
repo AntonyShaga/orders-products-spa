@@ -2,13 +2,13 @@ import { getDictionary } from '@/shared/i18n/getDictionary'
 import type { Locale } from '@/shared/i18n/config'
 import { ProductsPage } from '@/widgets/products/ui/ProductsPage'
 import { redirect } from 'next/navigation'
-import { fetchOrders } from '@/shared/api/server'
+import { serverFetch } from '@/shared/api/server'
 
 export default async function Products({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params
   const dict = await getDictionary(locale as Locale)
 
-  const orders = await fetchOrders()
+  const orders = await serverFetch('/orders')
 
   if (orders.error === 'unauthorized') {
     redirect(`/${locale}/login`)

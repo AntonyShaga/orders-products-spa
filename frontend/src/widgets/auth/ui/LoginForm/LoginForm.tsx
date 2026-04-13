@@ -40,7 +40,7 @@ export const LoginForm = ({ dict }: Props) => {
 
     const result = await login(email, password)
 
-    if (!result.success) {
+    if (result.error) {
       setError(result.error || dict.invalidCredentials)
       setLoading(false)
       return
