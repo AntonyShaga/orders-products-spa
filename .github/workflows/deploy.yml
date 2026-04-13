@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - staging
 
 jobs:
   deploy:
@@ -20,7 +21,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           source: "."
-          target: "~/orders-products-spa"
+          target: "~/temp-deploy"
 
       - name: Setup ENV + deploy
         uses: appleboy/ssh-action@v1.0.3
@@ -29,7 +30,16 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd ~/orders-products-spa
+            if [ "${{ github.ref_name }}" = "staging" ]; then
+              APP_DIR=~/orders-products-staging
+            else
+              APP_DIR=~/orders-products-spa
+            fi
+
+            mkdir -p $APP_DIR
+            cp -r ~/temp-deploy/* $APP_DIR/
+
+            cd $APP_DIR
 
             # backend env
             echo "${{ secrets.BACKEND_ENV }}" > backend/.env
@@ -37,5 +47,10 @@ jobs:
             # frontend env
             echo "${{ secrets.FRONTEND_ENV }}" > frontend/.env
 
-            docker-compose down
+            docker-compose down || true
+
+            if [ "${{ github.ref_name }}" = "staging" ]; then
+              sed -i 's/80:80/81:80/' docker-compose.yml
+            fi
+
             docker-compose up -d --build

@@ -3,7 +3,6 @@ version: '3.8'
 services:
   postgres:
     image: postgres:15
-    container_name: nexus-postgres
     restart: always
     environment:
       POSTGRES_USER: postgres
@@ -14,7 +13,6 @@ services:
 
   backend:
     build: ./backend
-    container_name: nexus-backend
     restart: always
     depends_on:
       - postgres
@@ -26,7 +24,6 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: nexus-frontend
     restart: always
     depends_on:
       - backend
@@ -36,7 +33,6 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: nexus-nginx
     restart: always
     ports:
       - "80:80"
