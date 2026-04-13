@@ -44,18 +44,18 @@ jobs:
 
             mkdir -p $APP_DIR
 
-            # копируем аккуратно (без мусора)
-            rsync -av --delete ~/temp-deploy/ $APP_DIR/
+            rsync -av ~/temp-deploy/ $APP_DIR/
 
             cd $APP_DIR
 
             echo "$BACK_ENV" > backend/.env
             echo "$FRONT_ENV" > frontend/.env
 
-            docker-compose -p $PROJECT_NAME down || true
+            docker-compose -p $PROJECT_NAME stop frontend backend nginx || true
+            docker-compose -p $PROJECT_NAME rm -f frontend backend nginx || true
 
             if [ "$PROJECT_NAME" = "staging" ]; then
               sed -i 's/80:80/81:80/' docker-compose.yml
             fi
 
-            docker-compose -p $PROJECT_NAME up -d --build
+            docker-compose -p $PROJECT_NAME up -d --build frontend backend nginx
