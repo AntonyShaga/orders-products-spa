@@ -39,8 +39,12 @@ export const AuthForm = ({
     const issue = err.issues[0]
     if (!issue) return 'Invalid data'
 
-    if (issue.path.includes('email')) return dict.invalidEmail
-    if (issue.path.includes('password')) return dict.minPassword
+    if (issue.path[0] === 'email') return dict.invalidEmail
+    if (issue.path[0] === 'password') return dict.minPassword
+
+    if (issue.message === 'passwordsMismatch') {
+      return dict.passwordsMismatch
+    }
 
     return issue.message
   }
