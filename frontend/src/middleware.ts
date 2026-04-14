@@ -6,7 +6,6 @@ function getLocale(req: NextRequest): Locale {
   if (!accept) return defaultLocale
 
   const match = accept.split(',')[0].split('-')[0] as Locale
-
   return locales.includes(match) ? match : defaultLocale
 }
 
@@ -19,14 +18,16 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url))
   }
 
-  const token = req.cookies.get('accessToken')
+  const rawToken = req.cookies.get('accessToken')?.value
+
+  const hasToken = Boolean(rawToken) && rawToken !== 'undefined' && rawToken !== 'null'
 
   const segments = pathname.split('/')
   const locale = segments[1]
 
   const isProtected = ['/orders', '/products'].some((p) => pathname.startsWith(`/${locale}${p}`))
 
-  if (!token && isProtected) {
+  if (!hasToken && isProtected) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
   }
 
