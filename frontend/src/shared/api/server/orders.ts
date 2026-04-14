@@ -16,6 +16,7 @@ export async function serverFetch<T>(path: string) {
         Cookie: cookie,
       },
       cache: 'no-store',
+      next: { revalidate: 0 },
     })
 
     if (res.status === 401) {
