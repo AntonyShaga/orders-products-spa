@@ -22,15 +22,20 @@ export const TopMenu = ({ locale, dict, isAuth }: Props) => {
           <div className="top-menu__logo-icon">🛡️</div>
           <span className="top-menu__logo-text">{dict.logo}</span>
         </div>
-
-        <div className="top-menu__search">
-          <input type="text" placeholder={dict.search} className="top-menu__search-input" />
-        </div>
+        {isAuth && (
+          <div className="top-menu__search">
+            <input type="text" placeholder={dict.search} className="top-menu__search-input" />
+          </div>
+        )}
       </div>
 
       <div className="top-menu__right">
-        <RealTimeClock locale={locale} labelToday={dict.today} />
-        <Sessions label={dict.sessions} />
+        {isAuth && (
+          <>
+            <RealTimeClock locale={locale} labelToday={dict.today} />
+            <Sessions label={dict.sessions} />
+          </>
+        )}
         <ThemeToggle />
         <LanguageSwitcher />
         {isAuth && <LogoutButton />}

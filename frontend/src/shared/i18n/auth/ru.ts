@@ -6,6 +6,8 @@ const auth: AuthDictionary = {
 
   emailPlaceholder: 'Email',
   passwordPlaceholder: 'Пароль',
+  confirmPasswordPlaceholder: 'Подтвердите пароль',
+  passwordsMismatch: 'Пароли не совпадают',
 
   loginButton: 'Войти',
   registerButton: 'Зарегистрироваться',

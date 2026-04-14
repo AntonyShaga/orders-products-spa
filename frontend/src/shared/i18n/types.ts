@@ -25,6 +25,8 @@ export interface AuthDictionary {
 
   emailPlaceholder: string
   passwordPlaceholder: string
+  confirmPasswordPlaceholder: string
+  passwordsMismatch: string
 
   loginButton: string
   registerButton: string
