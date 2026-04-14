@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/shared/styles/variables.css'
 import './globals.css'
-import { StoreProvider } from '@/providers/store-provider/ui/StoreProvider'
-import { serverFetch } from '@/shared/api/server'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -21,7 +19,6 @@ export const metadata: Metadata = {
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const orders = await serverFetch('/orders')
   return (
     <html suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -43,9 +40,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
       </head>
 
-      <body className="app">
-        <StoreProvider initialOrders={orders.data || []}>{children}</StoreProvider>
-      </body>
+      <body className="app">{children}</body>
     </html>
   )
 }

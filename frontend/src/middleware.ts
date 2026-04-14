@@ -24,16 +24,10 @@ export function middleware(req: NextRequest) {
   const segments = pathname.split('/')
   const locale = segments[1]
 
-  const isAuthPage = ['/login', '/register'].some((p) => pathname.startsWith(`/${locale}${p}`))
-
   const isProtected = ['/orders', '/products'].some((p) => pathname.startsWith(`/${locale}${p}`))
 
   if (!token && isProtected) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
-  }
-
-  if (token && isAuthPage) {
-    return NextResponse.redirect(new URL(`/${locale}/orders`, req.url))
   }
 
   return NextResponse.next()
