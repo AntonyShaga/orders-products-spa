@@ -30,7 +30,7 @@ export default async function MainLayout({
         <Sidebar locale={locale as Locale} />
       </aside>
 
-      <main className="app__content" style={{ position: 'relative', overflow: 'hidden' }}>
+      <main className="app__content">
         <div className="app__content-inner">
           {children} <ModalProvider dict={dict.modal} />
         </div>
