@@ -13,7 +13,7 @@ export default async function AuthLayout({
 
   const orders = await serverFetch('/orders')
 
-  if (orders.data) {
+  if (orders.error !== 'unauthorized') {
     redirect(`/${locale}/orders`)
   }
   return <div className="flex items-center justify-center min-h-screen">{children}</div>
