@@ -6,27 +6,32 @@ function getLocale(req: NextRequest): Locale {
   if (!accept) return defaultLocale
 
   const match = accept.split(',')[0].split('-')[0] as Locale
-
   return locales.includes(match) ? match : defaultLocale
 }
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl
 
+  // ✅ locale redirect
   const hasLocale = locales.some((l) => pathname.startsWith(`/${l}`))
   if (!hasLocale) {
     const locale = getLocale(req)
     return NextResponse.redirect(new URL(`/${locale}${pathname}`, req.url))
   }
 
-  const token = req.cookies.get('accessToken')
+  // ✅ нормальное получение токена
+  const rawToken = req.cookies.get('accessToken')?.value
+
+  // ✅ защита от мусора
+  const hasToken = Boolean(rawToken) && rawToken !== 'undefined' && rawToken !== 'null'
 
   const segments = pathname.split('/')
   const locale = segments[1]
 
   const isProtected = ['/orders', '/products'].some((p) => pathname.startsWith(`/${locale}${p}`))
 
-  if (!token && isProtected) {
+  // ✅ если нет нормального токена → на login
+  if (!hasToken && isProtected) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
   }
 
