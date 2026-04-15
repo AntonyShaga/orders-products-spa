@@ -18,7 +18,6 @@ interface OrderCardProps {
 
 export const OrderCard = ({ order, isSelected, isCompact, total, onSelect }: OrderCardProps) => {
   const dispatch = useAppDispatch()
-
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
 

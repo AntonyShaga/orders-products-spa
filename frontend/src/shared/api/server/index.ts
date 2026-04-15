@@ -1,1 +1,1 @@
-export { fetchOrders } from './orders'
+export { serverFetch } from './orders'

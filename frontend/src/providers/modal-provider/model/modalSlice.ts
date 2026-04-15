@@ -10,7 +10,7 @@ export type ModalState =
       }
     }[ModalType]
 
-const initialState = {
+const initialState: ModalState = {
   type: null,
   props: null,
 } as ModalState
@@ -20,7 +20,7 @@ export const modalSlice = createSlice({
   initialState,
   reducers: {
     openModal: (
-      state: ModalState,
+      state,
       action: PayloadAction<
         {
           [K in ModalType]: {
@@ -30,8 +30,10 @@ export const modalSlice = createSlice({
         }[ModalType]
       >,
     ) => {
-      state.type = action.payload.type
-      state.props = action.payload.props
+      return {
+        type: action.payload.type,
+        props: action.payload.props,
+      }
     },
 
     closeModal: () => initialState,

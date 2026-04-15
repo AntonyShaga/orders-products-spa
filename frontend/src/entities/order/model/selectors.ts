@@ -21,3 +21,10 @@ export const selectOrderTotal = (state: RootState, orderId: string) => {
     { USD: 0, UAH: 0 },
   )
 }
+
+export const selectOrdersWithTotals = (state: RootState) => {
+  return state.orders.orders.map((order) => ({
+    ...order,
+    total: selectOrderTotal(state, order.id),
+  }))
+}

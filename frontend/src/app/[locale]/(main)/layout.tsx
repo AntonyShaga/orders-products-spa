@@ -17,6 +17,7 @@ export default async function MainLayout({
   const dict = await getDictionary(locale as Locale)
   const cookieStore = await cookies()
   const isAuth = Boolean(cookieStore.get('accessToken'))
+
   return (
     <div className="app__layout">
       <header className="app__header">
@@ -29,7 +30,7 @@ export default async function MainLayout({
         <Sidebar locale={locale as Locale} />
       </aside>
 
-      <main className="app__content" style={{ position: 'relative', overflow: 'hidden' }}>
+      <main className="app__content">
         <div className="app__content-inner">
           {children} <ModalProvider dict={dict.modal} />
         </div>

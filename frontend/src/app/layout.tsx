@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import '@/shared/styles/variables.css'
 import './globals.css'
-import { StoreProvider } from '@/providers/store-provider/ui/StoreProvider'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   title: 'Inventory App',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -41,9 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
 
-      <body className="app">
-        <StoreProvider>{children}</StoreProvider>
-      </body>
+      <body className="app">{children}</body>
     </html>
   )
 }

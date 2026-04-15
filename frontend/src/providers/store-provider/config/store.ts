@@ -1,13 +1,18 @@
-import { configureStore } from '@reduxjs/toolkit'
+import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import { modalReducer } from '@/providers/modal-provider'
 import { orderReducer } from '@/entities/order/model/orderSlice'
 
-export const makeStore = () => {
+const rootReducer = combineReducers({
+  modal: modalReducer,
+  orders: orderReducer,
+})
+
+export type RootState = ReturnType<typeof rootReducer>
+
+export const makeStore = (preloadedState?: Partial<RootState>) => {
   return configureStore({
-    reducer: {
-      modal: modalReducer,
-      orders: orderReducer,
-    },
+    reducer: rootReducer,
+    preloadedState,
     middleware: (getDefaultMiddleware) =>
       getDefaultMiddleware({
         serializableCheck: false,
@@ -15,6 +20,5 @@ export const makeStore = () => {
   })
 }
 
-export const store = makeStore()
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type AppStore = ReturnType<typeof makeStore>
+export type AppDispatch = AppStore['dispatch']
