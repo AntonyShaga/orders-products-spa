@@ -8,7 +8,6 @@ import { setSelectedOrder } from '@/entities/order/model/orderSlice'
 import { selectOrdersWithTotals } from '@/entities/order/model/selectors'
 import { OrderCard } from '@/widgets/orders/ui/OrderCard/OrderCard'
 import { OrderDetails } from '@/widgets/orders/ui/OrderDetails/OrderDetails'
-import { Order } from '@/entities/order/model/types'
 import './OrderList.css'
 import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
 
@@ -20,45 +19,44 @@ export const OrderList = () => {
 
   const selectedOrder = ordersWithTotals.find((o) => o.id === selectedOrderId)
 
-  const [closingOrder, setClosingOrder] = useState<Order | null>(null)
-  const visibleOrder = selectedOrder ?? closingOrder
-  const isDetailsShown = Boolean(selectedOrder || closingOrder)
+  const [isClosing, setIsClosing] = useState(false)
 
-  const handleCloseDetails = () => {
-    if (!selectedOrder) return
-    setClosingOrder(selectedOrder)
-    dispatch(setSelectedOrder(null))
+  const isOpen = Boolean(selectedOrder) && !isClosing
+
+  const handleClose = () => {
+    setIsClosing(true)
   }
 
-  const handleDetailsExited = () => {
-    setClosingOrder(null)
+  const handleTransitionEnd = () => {
+    if (isClosing) {
+      dispatch(setSelectedOrder(null))
+      setIsClosing(false)
+    }
   }
 
   return (
-    <section className={`order-list ${isDetailsShown ? 'order-list--open' : ''}`}>
+    <section className={`order-list ${isOpen ? 'order-list--open' : ''}`}>
       <div className="order-list__items">
-        {ordersWithTotals.map((order) => {
-          return (
-            <OrderCard
-              key={order.id}
-              order={order}
-              isSelected={selectedOrderId === order.id}
-              isCompact={isDetailsShown}
-              total={order.total}
-              onSelect={() => dispatch(setSelectedOrder(order.id))}
-            />
-          )
-        })}
+        {ordersWithTotals.map((order) => (
+          <OrderCard
+            key={order.id}
+            order={order}
+            isSelected={selectedOrderId === order.id}
+            isCompact={isOpen}
+            total={order.total}
+            onSelect={() => dispatch(setSelectedOrder(order.id))}
+          />
+        ))}
       </div>
 
-      {visibleOrder && (
-        <OrderDetails
-          order={visibleOrder}
-          isOpen={Boolean(selectedOrder)}
-          onClose={handleCloseDetails}
-          onExited={handleDetailsExited}
-        />
-      )}
+      <div
+        className={`order-list__details ${isOpen ? 'open' : ''}`}
+        onTransitionEnd={handleTransitionEnd}
+      >
+        {selectedOrder && (
+          <OrderDetails order={selectedOrder} isOpen={isOpen} onClose={handleClose} />
+        )}
+      </div>
     </section>
   )
 }
