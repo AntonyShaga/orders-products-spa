@@ -59,7 +59,7 @@ jobs:
 
             mkdir -p $APP_DIR
 
-            rsync -av ~/temp-deploy/ $APP_DIR/
+            rsync -av --delete ~/temp-deploy/ $APP_DIR/
 
             cd $APP_DIR
 
