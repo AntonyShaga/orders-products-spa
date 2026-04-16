@@ -5,8 +5,9 @@ import { Order } from '@/entities/order/model/types'
 import { openModal } from '@/providers/modal-provider'
 import { ModalType } from '@/providers/modal-provider/config/modalTypes'
 import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
-
+import TrashIcon from '@/shared/assets/icons/trash.svg'
 import './OrderCard.css'
+import Image from 'next/image'
 
 interface OrderCardProps {
   order: Order
@@ -14,10 +15,19 @@ interface OrderCardProps {
   isCompact: boolean
   total: { USD: number; UAH: number }
   onSelect: () => void
+  onBack?: () => void
 }
 
-export const OrderCard = ({ order, isSelected, isCompact, total, onSelect }: OrderCardProps) => {
+export const OrderCard = ({
+  order,
+  isSelected,
+  isCompact,
+  total,
+  onSelect,
+  onBack,
+}: OrderCardProps) => {
   const dispatch = useAppDispatch()
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
 
@@ -30,6 +40,14 @@ export const OrderCard = ({ order, isSelected, isCompact, total, onSelect }: Ord
         },
       }),
     )
+  }
+
+  const handleArrowClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
+
+    if (isCompact) {
+      onBack?.()
+    }
   }
 
   return (
@@ -63,9 +81,13 @@ export const OrderCard = ({ order, isSelected, isCompact, total, onSelect }: Ord
       )}
 
       <div className="order-card__arrow-zone">
-        <button className="order-card__delete-btn" onClick={handleDelete}>
-          🗑
-        </button>
+        {isCompact ? (
+          <button type="button" className="order-card__arrow-btn" onClick={handleArrowClick} />
+        ) : (
+          <button type="button" className="order-card__delete-btn" onClick={handleDelete}>
+            <Image src={TrashIcon} alt="Delete order" width={16} height={16} />
+          </button>
+        )}
       </div>
     </div>
   )

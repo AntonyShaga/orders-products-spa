@@ -7,9 +7,9 @@ import { setSelectedOrder } from '@/entities/order/model/orderSlice'
 
 import { selectOrdersWithTotals } from '@/entities/order/model/selectors'
 import { OrderCard } from '@/widgets/orders/ui/OrderCard/OrderCard'
-import { OrderDetails } from '@/widgets/orders/ui/OrderDetails/OrderDetails'
 import './OrderList.css'
 import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
+import OrderDetails from '@/widgets/orders/ui/OrderDetails/OrderDetails'
 
 export const OrderList = () => {
   const dispatch = useAppDispatch()
@@ -44,6 +44,7 @@ export const OrderList = () => {
             isSelected={selectedOrderId === order.id}
             isCompact={isOpen}
             total={order.total}
+            onBack={handleClose}
             onSelect={() => dispatch(setSelectedOrder(order.id))}
           />
         ))}

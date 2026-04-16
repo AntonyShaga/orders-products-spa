@@ -1,10 +1,10 @@
 import { Sidebar } from '@/widgets/sidebar/ui/Sidebar'
 import { getDictionary } from '@/shared/i18n/getDictionary'
 import type { Locale } from '@/shared/i18n/config'
-import { TopMenu } from '@/widgets/top-menu/ui/TopMenu'
 import { ModalProvider } from '@/providers/modal-provider/ui/ModalProvider'
 import React from 'react'
 import { cookies } from 'next/dist/server/request/cookies'
+import { TopMenu } from '@/widgets/top-menu/ui/TopMenu'
 
 export default async function MainLayout({
   children,
