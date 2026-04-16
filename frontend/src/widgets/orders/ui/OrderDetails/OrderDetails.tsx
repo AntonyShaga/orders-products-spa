@@ -13,7 +13,7 @@ interface OrderDetailsProps {
   onExited?: () => void
 }
 
-export const OrderDetails = ({ order, isOpen, onClose, onExited }: OrderDetailsProps) => {
+export default function OrderDetails({ order, isOpen, onClose, onExited }: OrderDetailsProps) {
   const [visible, setVisible] = useState(false)
 
   const { title, products } = order
