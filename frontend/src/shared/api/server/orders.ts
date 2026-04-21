@@ -2,7 +2,7 @@ import { cookies } from 'next/headers'
 
 const BASE = process.env.INTERNAL_API_URL
 
-export async function serverFetch<T>(path: string) {
+export async function serverFetch(path: string) {
   try {
     const cookieStore = await cookies()
 

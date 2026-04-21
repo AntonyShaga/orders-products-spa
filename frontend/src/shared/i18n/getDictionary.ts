@@ -1,12 +1,12 @@
 import { cache } from 'react'
-import { ROUTES, type RouteKey } from '@/config/routes'
+import { type RouteKey, ROUTES } from '@/config/routes'
 import type { Locale } from './config'
 import type {
   AuthDictionary,
   Dictionary,
   HeaderDictionary,
   ModalDictionary,
-  PageDictionary,
+  ProductsDictionary,
   SidebarDictionary,
 } from './types'
 
@@ -24,7 +24,7 @@ export const getDictionary = cache(async (locale: Locale): Promise<Dictionary> =
     }),
   )
 
-  const safeEntries = entries.filter(Boolean) as [RouteKey, PageDictionary][]
+  const safeEntries = entries.filter(Boolean) as [RouteKey, Dictionary][]
 
   const sidebarMod = await import(`./sidebar/${locale}`)
   const sidebar = sidebarMod.default as SidebarDictionary
@@ -37,11 +37,15 @@ export const getDictionary = cache(async (locale: Locale): Promise<Dictionary> =
 
   const authMod = await import(`./auth/${locale}`)
   const auth = authMod.default as AuthDictionary
+
+  const productsMod = await import(`./products/${locale}`)
+  const products = productsMod.default as ProductsDictionary
   return {
     ...Object.fromEntries(safeEntries),
     sidebar,
     header,
     modal,
     auth,
+    products,
   } satisfies Dictionary
 })

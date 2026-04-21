@@ -4,6 +4,43 @@ export interface PageDictionary {
   title: string
 }
 
+export interface ProductsPageDictionary {
+  title: string
+}
+
+export interface ProductsToolbarDictionary {
+  chartTitle: string
+  filterAll: string
+  productTypes: {
+    phone: string
+    laptop: string
+    monitor: string
+  }
+}
+
+export interface ProductsTableDictionary {
+  name: string
+  type: string
+  guarantee: string
+  price: string
+  order: string
+  status: string
+  empty: string
+  statusFree: string
+  statusRepair: string
+  productTypes: {
+    phone: string
+    laptop: string
+    monitor: string
+  }
+}
+
+export interface ProductsDictionary {
+  page: ProductsPageDictionary
+  toolbar: ProductsToolbarDictionary
+  table: ProductsTableDictionary
+}
+
 export interface HeaderDictionary {
   logo: string
   today: string
@@ -48,10 +85,9 @@ export interface AuthDictionary {
 export type SidebarDictionary = Record<RouteKey, string>
 
 export type Dictionary = {
-  [K in RouteKey]?: PageDictionary
-} & {
   sidebar: SidebarDictionary
   header: HeaderDictionary
   modal: ModalDictionary
   auth: AuthDictionary
+  products: ProductsDictionary
 }
