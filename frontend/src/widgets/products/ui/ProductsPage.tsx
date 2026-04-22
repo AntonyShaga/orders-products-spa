@@ -17,6 +17,7 @@ import { ProductsTable } from './ProductsTable'
 
 import './ProductsPage.css'
 import type { ProductsDictionary } from '@/shared'
+import { usePagination } from '@/shared/lib/hooks/usePagination'
 interface ProductsPageState {
   dict: ProductsDictionary
   locale: string
@@ -36,12 +37,7 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
     [products, selectedType],
   )
 
-  const pageSize = 5
-  const [page, setPage] = useState(0)
-
-  const paginatedProducts = useMemo(() => {
-    return filteredProducts.slice(page * pageSize, (page + 1) * pageSize)
-  }, [filteredProducts, page])
+  const { page, setPage, total, pageSize, paginatedData } = usePagination(filteredProducts, 5)
 
   const chartData = useMemo(() => getProductsByType(products), [products])
 
@@ -58,12 +54,12 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
         }}
         types={types}
         page={page}
-        total={filteredProducts.length}
+        total={total}
         pageSize={pageSize}
         onPageChange={setPage}
       />
 
-      <ProductsTable dictProductsTable={dict.table} products={paginatedProducts} locale={locale} />
+      <ProductsTable dictProductsTable={dict.table} products={paginatedData} locale={locale} />
     </div>
   )
 }

@@ -18,7 +18,7 @@ const products: ProductsDictionary = {
     type: 'Type',
     guarantee: 'Guarantee',
     price: 'Price',
-    order: 'Order',
+    orderLabel: 'Order',
     status: 'Status',
     empty: 'No products',
     statusFree: 'Free',

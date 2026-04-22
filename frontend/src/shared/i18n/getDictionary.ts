@@ -1,11 +1,12 @@
 import { cache } from 'react'
 import { type RouteKey, ROUTES } from '@/config/routes'
 import type { Locale } from './config'
-import type {
+import {
   AuthDictionary,
   Dictionary,
   HeaderDictionary,
   ModalDictionary,
+  OrdersDictionary,
   ProductsDictionary,
   SidebarDictionary,
 } from './types'
@@ -40,6 +41,10 @@ export const getDictionary = cache(async (locale: Locale): Promise<Dictionary> =
 
   const productsMod = await import(`./products/${locale}`)
   const products = productsMod.default as ProductsDictionary
+
+  const ordersMod = await import(`./orders/${locale}`)
+  const orders = ordersMod.default as OrdersDictionary
+
   return {
     ...Object.fromEntries(safeEntries),
     sidebar,
@@ -47,5 +52,6 @@ export const getDictionary = cache(async (locale: Locale): Promise<Dictionary> =
     modal,
     auth,
     products,
+    orders,
   } satisfies Dictionary
 })

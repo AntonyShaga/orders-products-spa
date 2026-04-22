@@ -19,7 +19,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
     name,
     price,
     status,
-    order,
+    orderLabel,
     empty,
     statusRepair,
     statusFree,
@@ -34,7 +34,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
             <th>{type}</th>
             <th>{guarantee}</th>
             <th>{price}</th>
-            <th>{order}</th>
+            <th>{orderLabel}</th>
             <th>{status}</th>
           </tr>
         </thead>
@@ -70,7 +70,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
                 ))}
               </td>
 
-              <td className="text-center">{p.orderTitle}</td>
+              <td className="text-center">{`${dictProductsTable.orderLabel}  ${p.orderTitle}`}</td>
 
               <td className="products__status text-center">
                 <span className={`badge ${p.isNew ? 'bg-success' : 'bg-secondary'}`}>

@@ -22,7 +22,7 @@
 }
 
 .order-card--compact {
-  grid-template-columns: auto auto auto 30px;
+  grid-template-columns: minmax(0, 0.3fr) auto auto 30px;
   cursor: auto;
 }
 
@@ -44,6 +44,11 @@
 .order-card__title {
   font-size: 14px;
   color: var(--color-text);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .order-card__icon-box {

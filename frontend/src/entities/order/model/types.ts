@@ -12,7 +12,7 @@ export interface Guarantee {
 export interface Product {
   id: string
   serialNumber: number
-  isNew: number
+  isNew: boolean
   photo: string
   title: string
   type: string
