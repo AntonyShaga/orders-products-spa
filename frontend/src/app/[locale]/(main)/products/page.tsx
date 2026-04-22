@@ -6,10 +6,5 @@ export default async function Products({ params }: { params: Promise<{ locale: s
   const { locale } = await params
   const dict = await getDictionary(locale as Locale)
 
-  return (
-    <>
-      <h2>{dict.sidebar.products}</h2>
-      <ProductsPage />
-    </>
-  )
+  return <ProductsPage dict={dict.products} locale={locale} />
 }

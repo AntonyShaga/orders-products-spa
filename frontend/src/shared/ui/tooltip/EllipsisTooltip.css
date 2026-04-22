@@ -1,0 +1,51 @@
+.ellipsis-wrapper {
+    position: relative;
+    display: inline-block;
+    max-width: 60px;
+}
+
+.ellipsis-text {
+    font-size: 13px;
+    text-align: center;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    outline: none;
+}
+
+.ellipsis-tooltip {
+    position: absolute;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+
+    white-space: nowrap;
+
+    z-index: 10;
+}
+
+.ellipsis-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--color-surface) transparent transparent transparent;
+}
+
+.ellipsis-wrapper--w-60 { max-width: 60px; }
+.ellipsis-wrapper--w-100 { max-width: 100px; }
+.ellipsis-wrapper--w-140 { max-width: 140px; }

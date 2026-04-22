@@ -1,7 +1,71 @@
 import { RouteKey } from '@/config/routes'
 
-export interface PageDictionary {
+export interface CommonDictionary {
+  orderLabel: string
+}
+
+export interface OrdersPageDictionary {
   title: string
+}
+export interface OrderCardDictionary extends CommonDictionary {
+  product: {
+    one: string
+    few: string
+    many: string
+  }
+}
+
+export interface ProductRowDictionary extends CommonDictionary {
+  free: string
+  repair: string
+}
+
+export interface OrderDetailsDictionary extends CommonDictionary {
+  empty: string
+  addProduct: string
+  status: ProductRowDictionary
+}
+
+export interface OrdersDictionary {
+  page: OrdersPageDictionary
+  orderCard: OrderCardDictionary
+  orderDetails: OrderDetailsDictionary
+}
+
+export interface ProductsPageDictionary {
+  title: string
+}
+
+export interface ProductsToolbarDictionary {
+  chartTitle: string
+  filterAll: string
+  productTypes: {
+    phone: string
+    laptop: string
+    monitor: string
+  }
+}
+
+export interface ProductsTableDictionary extends CommonDictionary {
+  name: string
+  type: string
+  guarantee: string
+  price: string
+  status: string
+  empty: string
+  statusFree: string
+  statusRepair: string
+  productTypes: {
+    phone: string
+    laptop: string
+    monitor: string
+  }
+}
+
+export interface ProductsDictionary {
+  page: ProductsPageDictionary
+  toolbar: ProductsToolbarDictionary
+  table: ProductsTableDictionary
 }
 
 export interface HeaderDictionary {
@@ -48,10 +112,10 @@ export interface AuthDictionary {
 export type SidebarDictionary = Record<RouteKey, string>
 
 export type Dictionary = {
-  [K in RouteKey]?: PageDictionary
-} & {
   sidebar: SidebarDictionary
   header: HeaderDictionary
   modal: ModalDictionary
   auth: AuthDictionary
+  products: ProductsDictionary
+  orders: OrdersDictionary
 }

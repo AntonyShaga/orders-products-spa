@@ -92,8 +92,7 @@ ol {
 }
 
 .app__content-inner {
-  padding: 40px;
-  overflow-y: auto;
+
 }
 
 
@@ -185,15 +184,4 @@ ol {
   .app__header-content--auth {
     padding: 0 12px;
   }
-}
-
-.page-loading-overlay {
-  position: fixed;
-  inset: 0;
-
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(2px);
-
-  animation: fadePulse 1.2s infinite;
-  z-index: 999;
 }

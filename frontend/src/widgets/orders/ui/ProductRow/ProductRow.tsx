@@ -1,10 +1,18 @@
 'use client'
 
-import { formatDateLong, formatDateShort } from '@/widgets/orders/ui/helpers'
 import { Product } from '@/entities/order/model/types'
 import './ProductRow.css'
+import { ProductRowDictionary } from '@/shared'
+import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
+import { EllipsisTooltip } from '@/shared/ui/tooltip/EllipsisTooltip'
+export interface ProductRowProps {
+  product: Product
+  orderTitle: string
+  statusDict: ProductRowDictionary
+  locale: string
+}
 
-export const ProductRow = ({ product, orderTitle }: { product: Product; orderTitle: string }) => {
+export const ProductRow = ({ product, orderTitle, statusDict, locale }: ProductRowProps) => {
   return (
     <div className="product-row">
       <div className="product-row__status">
@@ -20,15 +28,24 @@ export const ProductRow = ({ product, orderTitle }: { product: Product; orderTit
       </div>
 
       <div className="product-row__info">
-        <div className="product-row__name">{product.title}</div>
+        <EllipsisTooltip
+          parts={[product.title]}
+          className="ellipsis-wrapper--w-100 product-row__name"
+        />
         <div className="product-row__serial">{product.serialNumber}</div>
       </div>
 
-      <div className="product-row__status-text">{product.isNew ? 'Свободен' : 'В ремонте'}</div>
+      <div className="product-row__status-text">
+        {product.isNew ? statusDict.free : statusDict.repair}
+      </div>
 
       <div className="product-row__date">
-        <div className="product-row__date-top">{formatDateShort(product.guarantee.start)}</div>
-        <div className="product-row__date-bottom">{formatDateLong(product.guarantee.end)}</div>
+        <div className="product-row__date-top">
+          {formatDateShort(product.guarantee.start, locale)}
+        </div>
+        <div className="product-row__date-bottom">
+          {formatDateLong(product.guarantee.end, locale)}
+        </div>
       </div>
 
       <div className="product-row__price">
@@ -40,8 +57,12 @@ export const ProductRow = ({ product, orderTitle }: { product: Product; orderTit
         ))}
       </div>
 
-      <div className="product-row__order-title">{orderTitle}</div>
-
+      <div className="product-row__order-title">
+        <EllipsisTooltip
+          parts={[statusDict.orderLabel, orderTitle]}
+          className="ellipsis-wrapper--w-60"
+        />
+      </div>
       <div className="product-row__delete">
         <button className="product-row__delete-btn">🗑</button>
       </div>

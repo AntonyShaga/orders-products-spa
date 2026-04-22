@@ -10,7 +10,7 @@ export const mockOrders: Order[] = [
       {
         id: 'p1',
         serialNumber: 111,
-        isNew: 1,
+        isNew: true,
         photo: 'photo1.jpg',
         title: 'Phone 1',
         type: 'phone',
@@ -29,7 +29,7 @@ export const mockOrders: Order[] = [
       {
         id: 'p2',
         serialNumber: 222,
-        isNew: 0,
+        isNew: false,
         photo: 'photo2.jpg',
         title: 'Laptop 1',
         type: 'laptop',
@@ -56,7 +56,7 @@ export const mockOrders: Order[] = [
       {
         id: 'p3',
         serialNumber: 333,
-        isNew: 1,
+        isNew: true,
         photo: 'photo3.jpg',
         title: 'Phone 2',
         type: 'phone',

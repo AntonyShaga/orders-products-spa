@@ -1,10 +1,9 @@
 :root {
-  /* layout */
   --header-height: 80px;
   --sidebar-width: 240px;
   --layout-max: 1600px;
 
-  /* colors (light) */
+
   --color-bg: #f4f7f9;
   --color-surface: #ffffff;
   --color-border: #eeeeee;
@@ -12,15 +11,17 @@
 
   --color-accent: #8bc34a;
 
-  /* NEW (из top-menu) */
   --color-logo-bg: #7ac943;
   --color-logo-text: #7ac943;
 
-  /* semantic */
   --bg: var(--color-bg);
   --text: var(--color-text);
   --color-text-secondary: #777;
   --color-danger: #e46a6a;
+
+  --color-card-arrow-bg: #e6e6e6;
+  --color-card-arrow-border: #d0d0d0;
+  --color-card-arrow-icon: #ffffff;
 }
 
 :root[data-theme='dark'] {
@@ -38,4 +39,8 @@
   --text: var(--color-text);
   --color-text-secondary: #aaa;
   --color-danger: #e46a6a;
+
+  --color-card-arrow-bg: #3a3a3a;
+  --color-card-arrow-border: #555;
+  --color-card-arrow-icon: #fff;
 }

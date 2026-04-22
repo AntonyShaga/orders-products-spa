@@ -9,8 +9,7 @@ export default async function IncomingPage({ params }: { params: Promise<{ local
 
   return (
     <>
-      <h2>{dict.sidebar.orders}</h2>
-      <OrderList />
+      <OrderList locale={locale} dict={dict.orders} />
     </>
   )
 }

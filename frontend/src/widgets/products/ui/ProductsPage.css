@@ -1,0 +1,5 @@
+.products {
+  background: var(--bg);
+  border-radius: 12px;
+  padding: 20px;
+}
