@@ -33,7 +33,6 @@ export const OrderCard = ({
   dictOrderCard,
 }: OrderCardProps) => {
   const dispatch = useAppDispatch()
-
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
 
