@@ -1,7 +1,27 @@
-import { PageDictionary } from '../types'
+import { OrdersDictionary } from '../types'
 
-const orders: PageDictionary = {
-  title: 'Замовлення',
+const orders: OrdersDictionary = {
+  page: {
+    title: 'Замовлення',
+  },
+  orderCard: {
+    orderLabel: 'Замовлення',
+    product: {
+      one: 'продукт',
+      few: 'продукти',
+      many: 'продуктів',
+    },
+  },
+  orderDetails: {
+    empty: 'Немає товарів',
+    orderLabel: 'Замовлення',
+    addProduct: 'Додати продукт',
+    status: {
+      orderLabel: 'Замовлення',
+      free: 'Вільний',
+      repair: 'В ремонті',
+    },
+  },
 }
 
 export default orders

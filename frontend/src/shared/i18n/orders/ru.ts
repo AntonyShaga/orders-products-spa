@@ -1,7 +1,27 @@
-import { PageDictionary } from '../types'
+import { OrdersDictionary } from '../types'
 
-const orders: PageDictionary = {
-  title: 'Заказы',
+const orders: OrdersDictionary = {
+  page: {
+    title: 'Заказы',
+  },
+  orderCard: {
+    orderLabel: 'Заказ',
+    product: {
+      one: 'продукт',
+      few: 'продукта',
+      many: 'продуктов',
+    },
+  },
+  orderDetails: {
+    empty: 'Нет товаров',
+    orderLabel: 'Заказ',
+    addProduct: 'Добавить продукт',
+    status: {
+      orderLabel: 'Заказ',
+      free: 'Свободен',
+      repair: 'В ремонте',
+    },
+  },
 }
 
 export default orders
