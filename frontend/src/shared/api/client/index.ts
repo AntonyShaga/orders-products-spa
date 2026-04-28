@@ -1,2 +1,2 @@
-export { deleteOrder, getOrders } from './orders'
+export { deleteOrder, getOrders, createOrder, createProduct, deleteProduct } from './orders'
 export { login, register, logout } from './auth'
