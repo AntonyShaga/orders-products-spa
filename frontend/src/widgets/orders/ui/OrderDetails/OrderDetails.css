@@ -49,7 +49,7 @@
   font-weight: 700;
 
   color: var(--color-text);
-
+  white-space: nowrap;
   margin: 0;
 }
 
@@ -63,8 +63,6 @@
 
   color: var(--color-accent);
   font-weight: 600;
-
-  cursor: pointer;
 }
 
 .order-details__plus {
@@ -74,8 +72,8 @@
   border-radius: 50%;
 
   background: var(--color-accent);
-  color: #fff;
-
+  color: var(--color-text);
+  white-space: nowrap;
   display: flex;
   align-items: center;
   justify-content: center;

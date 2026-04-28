@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
 import { OrderCardDictionary } from '@/shared'
 import { getPlural } from '@/shared/pluralize/getPlural'
+import React from 'react'
 
 interface OrderCardProps {
   order: Order
@@ -33,6 +34,7 @@ export const OrderCard = ({
   dictOrderCard,
 }: OrderCardProps) => {
   const dispatch = useAppDispatch()
+
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation()
 
@@ -40,8 +42,9 @@ export const OrderCard = ({
       openModal({
         type: ModalType.DELETE,
         props: {
-          id: order.id,
+          orderId: order.id,
           title: order.title,
+          mode: 'order',
         },
       }),
     )

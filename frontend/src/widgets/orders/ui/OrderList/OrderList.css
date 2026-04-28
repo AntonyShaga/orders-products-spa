@@ -6,6 +6,51 @@
   width: 100%;
 }
 
+.order-list__header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.order-list__title {
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 0;
+  color: var(--color-text);
+}
+
+.order-list__add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: transparent;
+  border: none;
+
+  color: var(--color-accent);
+  font-weight: 500;
+}
+
+.order-list__add-icon {
+  width: 22px;
+  height: 22px;
+
+  border-radius: 50%;
+
+  background: var(--color-accent);
+  color: var(--color-text);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 14px;
+}
+
+.order-list__add:hover {
+  opacity: 0.85;
+}
+
 .order-list {
   display: grid;
   grid-template-columns: 1fr 0fr;
