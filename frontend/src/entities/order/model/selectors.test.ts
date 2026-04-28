@@ -3,11 +3,15 @@ import { RootState } from '@/providers/store-provider'
 import { Order } from '@/entities/order/model/types'
 import { mockOrders } from './__mocks__/orders.mock'
 
-const createMockState = (orders: Order[]): RootState =>
-  ({
-    orders: { orders },
-    modal: { type: null, props: null },
-  }) as RootState
+const createMockState = (partial: Partial<RootState> = {}): RootState => ({
+  orders: {
+    orders: [],
+    selectedOrderId: null,
+  },
+  modal: [],
+  productTypes: [],
+  ...partial,
+})
 
 describe('order selectors', () => {
   test('getPriceBySymbol returns correct value', () => {
@@ -28,7 +32,12 @@ describe('order selectors', () => {
   })
 
   test('selectOrderTotal calculates totals correctly', () => {
-    const mockState = createMockState(mockOrders)
+    const mockState = createMockState({
+      orders: {
+        orders: mockOrders,
+        selectedOrderId: null,
+      },
+    })
 
     const result = selectOrderTotal(mockState, '1')
 
@@ -39,7 +48,7 @@ describe('order selectors', () => {
   })
 
   test('selectOrderTotal returns zeros if order not found', () => {
-    const mockState = createMockState([])
+    const mockState = createMockState()
 
     const result = selectOrderTotal(mockState, 'unknown')
 

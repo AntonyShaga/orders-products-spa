@@ -20,8 +20,8 @@ export const mockOrders: Order[] = [
           end: '2026-01-01T00:00:00.000Z',
         },
         price: [
-          { value: 100, symbol: 'USD', isDefault: 1 },
-          { value: 4000, symbol: 'UAH', isDefault: 0 },
+          { value: 100, symbol: 'USD', isDefault: true },
+          { value: 4000, symbol: 'UAH', isDefault: false },
         ],
         order: '1',
         date: '2025-01-01T00:00:00.000Z',
@@ -39,8 +39,8 @@ export const mockOrders: Order[] = [
           end: '2026-01-01T00:00:00.000Z',
         },
         price: [
-          { value: 200, symbol: 'USD', isDefault: 1 },
-          { value: 8000, symbol: 'UAH', isDefault: 0 },
+          { value: 200, symbol: 'USD', isDefault: true },
+          { value: 8000, symbol: 'UAH', isDefault: false },
         ],
         order: '1',
         date: '2025-01-01T00:00:00.000Z',
@@ -66,8 +66,8 @@ export const mockOrders: Order[] = [
           end: '2026-01-02T00:00:00.000Z',
         },
         price: [
-          { value: 150, symbol: 'USD', isDefault: 1 },
-          { value: 6000, symbol: 'UAH', isDefault: 0 },
+          { value: 150, symbol: 'USD', isDefault: true },
+          { value: 6000, symbol: 'UAH', isDefault: false },
         ],
         order: '2',
         date: '2025-01-02T00:00:00.000Z',
