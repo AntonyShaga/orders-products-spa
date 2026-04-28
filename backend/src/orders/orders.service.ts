@@ -1,27 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { CreateProductDto } from './dto/create-product.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(dto: GetOrdersDto) {
+  async getAll(dto: GetOrdersDto, userId: string) {
     const orders = await this.prisma.order.findMany({
-      where: dto.search
-        ? {
-            title: {
-              contains: dto.search,
-              mode: 'insensitive',
-            },
-          }
-        : {},
+      where: {
+        userId,
+        ...(dto.search
+          ? {
+              title: {
+                contains: dto.search,
+                mode: 'insensitive',
+              },
+            }
+          : {}),
+      },
       include: {
         products: {
           include: {
             prices: true,
           },
         },
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -56,26 +63,134 @@ export class OrdersService {
       })),
     }));
   }
+  async createProduct(dto: CreateProductDto, userId: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { id: dto.orderId },
+    });
 
-  async deleteById(id: string) {
-    await this.prisma.price.deleteMany({
+    if (!order || order.userId !== userId) {
+      throw new ForbiddenException();
+    }
+
+    try {
+      const product = await this.prisma.product.create({
+        data: {
+          title: dto.title,
+          serialNumber: dto.serialNumber,
+          type: dto.type,
+          isNew: dto.isNew,
+          photo: dto.photo,
+          specification: dto.specification,
+          date: new Date(),
+
+          guaranteeStart: new Date(dto.guarantee.start),
+          guaranteeEnd: new Date(dto.guarantee.end),
+
+          orderId: dto.orderId,
+
+          prices: {
+            create: dto.price,
+          },
+        },
+        include: {
+          prices: true,
+        },
+      });
+
+      return {
+        id: product.id,
+        serialNumber: product.serialNumber,
+        isNew: product.isNew,
+        photo: product.photo,
+        title: product.title,
+        type: product.type,
+        specification: product.specification,
+
+        guarantee: {
+          start: product.guaranteeStart.toISOString(),
+          end: product.guaranteeEnd.toISOString(),
+        },
+
+        price: product.prices.map((pr) => ({
+          value: pr.value,
+          symbol: pr.symbol,
+          isDefault: pr.isDefault,
+        })),
+
+        order: product.orderId,
+        date: product.date.toISOString(),
+      };
+    } catch (e) {
+      console.error('CREATE PRODUCT ERROR:', e);
+      throw e;
+    }
+  }
+  async deleteById(id: string, userId: string) {
+    const result = await this.prisma.order.deleteMany({
       where: {
-        product: {
-          orderId: id,
+        id,
+        userId,
+      },
+    });
+
+    if (result.count === 0) {
+      throw new Error('Not found or forbidden');
+    }
+
+    return { success: true };
+  }
+  async deleteProduct(id: string, userId: string) {
+    const product = await this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        order: true,
+      },
+    });
+
+    if (!product || product.order.userId !== userId) {
+      throw new ForbiddenException();
+    }
+
+    await this.prisma.product.delete({
+      where: { id },
+    });
+
+    return { success: true };
+  }
+  async create(userId: string) {
+    const now = new Date();
+
+    const datePart = now.toISOString().slice(0, 10).replace(/-/g, '');
+
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const count = await this.prisma.order.count({
+      where: {
+        createdAt: {
+          gte: startOfDay,
         },
       },
     });
 
-    await this.prisma.product.deleteMany({
-      where: {
-        orderId: id,
+    const number = String(count + 1).padStart(3, '0');
+    const title = `ORD-${datePart}-${number}`;
+
+    const order = await this.prisma.order.create({
+      data: {
+        title,
+        description: '',
+        date: now,
+        userId,
       },
     });
 
-    return this.prisma.order.delete({
-      where: {
-        id,
-      },
-    });
+    return {
+      id: order.id,
+      title: order.title,
+      date: order.date.toISOString(),
+      description: order.description,
+      products: [],
+    };
   }
 }
