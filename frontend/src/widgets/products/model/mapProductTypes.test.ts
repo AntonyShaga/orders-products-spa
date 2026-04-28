@@ -1,28 +1,29 @@
 import { mapProductTypes, mapProductTypeLabel } from './mapProductTypes'
-import { ProductsToolbarDictionary } from '@/shared'
+import { ProductType } from '@/entities/product-types/model/productTypeSlice'
 
 describe('mapProductTypes', () => {
-  const dict: ProductsToolbarDictionary = {
-    chartTitle: '',
-    filterAll: '',
-    productTypes: {
-      phone: 'Phone',
-      laptop: 'Laptop',
-      monitor: 'Monitor',
-    },
+  const dict = {
+    phone: 'Phone',
+    laptop: 'Laptop',
+    monitor: 'Monitor',
   }
 
-  it('maps types to labels', () => {
-    const result = mapProductTypes(['phones', 'laptops'], dict)
+  const productTypes: ProductType[] = [
+    { key: 'phone', icon: '' },
+    { key: 'laptop', icon: '' },
+  ]
+
+  it('maps productTypes to labels', () => {
+    const result = mapProductTypes(productTypes, dict)
 
     expect(result).toEqual([
-      { value: 'phones', label: 'Phone' },
-      { value: 'laptops', label: 'Laptop' },
+      { value: 'phone', label: 'Phone' },
+      { value: 'laptop', label: 'Laptop' },
     ])
   })
 
-  it('falls back to original type if not found', () => {
-    const result = mapProductTypes(['unknown'], dict)
+  it('falls back to key if label not found', () => {
+    const result = mapProductTypes([{ key: 'unknown', icon: '' } as unknown as ProductType], dict)
 
     expect(result).toEqual([{ value: 'unknown', label: 'unknown' }])
   })
@@ -35,21 +36,17 @@ describe('mapProductTypes', () => {
 })
 
 describe('mapProductTypeLabel', () => {
-  const productTypes = {
+  const dict = {
     phone: 'Phone',
     laptop: 'Laptop',
     monitor: 'Monitor',
   }
 
   it('maps single type correctly', () => {
-    expect(mapProductTypeLabel('phones', productTypes)).toBe('Phone')
+    expect(mapProductTypeLabel('phone', dict)).toBe('Phone')
   })
 
   it('falls back if type not found', () => {
-    expect(mapProductTypeLabel('unknown', productTypes)).toBe('unknown')
-  })
-
-  it('handles already singular type', () => {
-    expect(mapProductTypeLabel('phone', productTypes)).toBe('Phone')
+    expect(mapProductTypeLabel('unknown', dict)).toBe('unknown')
   })
 })

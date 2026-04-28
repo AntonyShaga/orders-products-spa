@@ -5,6 +5,8 @@ import './ProductsToolbar.css'
 import { ProductsPageDictionary, ProductsToolbarDictionary } from '@/shared'
 import { mapProductTypes } from '@/widgets/products/model/mapProductTypes'
 import { Pagination } from '@/shared/ui/pagination/Pagination'
+import { useSelector } from 'react-redux'
+import { RootState } from '@/providers/store-provider'
 
 type Props = {
   dictToolbar: ProductsToolbarDictionary
@@ -12,7 +14,6 @@ type Props = {
   chartData: { type: string; count: number }[]
   selectedType: string | null
   onChange: (value: string | null) => void
-  types: string[]
   page: number
   total: number
   pageSize: number
@@ -25,16 +26,14 @@ export const ProductsToolbar = ({
   chartData,
   selectedType,
   onChange,
-  types,
   page,
   total,
   pageSize,
   onPageChange,
 }: Props) => {
-  const options = mapProductTypes(
-    types as (keyof ProductsToolbarDictionary['productTypes'])[],
-    dictToolbar,
-  )
+  const productTypes = useSelector((state: RootState) => state.productTypes)
+  const options = mapProductTypes(productTypes, dictToolbar.productTypes)
+
   return (
     <div className="products__toolbar">
       <div className="products__left">

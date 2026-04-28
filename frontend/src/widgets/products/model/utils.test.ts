@@ -1,4 +1,4 @@
-import { filterProducts, getProductTypes, mapOrdersToProducts } from './utils'
+import { filterProducts, mapOrdersToProducts } from './utils'
 import { mockOrders } from '@/entities/order/model/__mocks__/orders.mock'
 
 describe('products utils', () => {
@@ -8,15 +8,6 @@ describe('products utils', () => {
     expect(result).toHaveLength(3)
     expect(result[0].orderTitle).toBe('Order 1')
     expect(result[2].orderTitle).toBe('Order 2')
-  })
-
-  test('getProductTypes', () => {
-    const products = mapOrdersToProducts(mockOrders)
-    const types = getProductTypes(products)
-
-    expect(types).toContain('phone')
-    expect(types).toContain('laptop')
-    expect(types).toHaveLength(2)
   })
 
   test('filterProducts', () => {
