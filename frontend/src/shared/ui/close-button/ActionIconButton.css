@@ -1,0 +1,81 @@
+.action-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    cursor: pointer;
+
+    border: 0;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+
+    transition: all 0.15s ease;
+}
+
+.action-icon:hover {
+    color: var(--color-text);
+    transform: translateY(-1px);
+}
+
+.action-icon--lg {
+    width: 40px;
+    height: 40px;
+}
+
+.action-icon--md {
+    width: 32px;
+    height: 32px;
+}
+
+.action-icon--sm {
+    width: 28px;
+    height: 28px;
+}
+
+.action-icon--md svg {
+    width: 18px;
+    height: 18px;
+}
+
+.action-icon--sm svg {
+    width: 14px;
+    height: 14px;
+}
+
+.action-icon svg {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.action-icon--close {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.16);
+}
+
+.action-icon--add {
+    background: var(--color-accent);
+    color: var(--color-text);
+}
+
+.action-icon--add:hover {
+    opacity: 0.9;
+    transform: none;
+}
+
+.action-icon--modal {
+    position: absolute;
+    top: -18px;
+    right: -18px;
+}
+
+.action-icon--details {
+    position: absolute;
+    top: -35px;
+    right: -35px;
+}
+
+.action-icon--inline {
+    position: static;
+}
