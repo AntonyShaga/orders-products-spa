@@ -1,9 +1,34 @@
 import { ModalDictionary } from '../types'
 
 const modals: ModalDictionary = {
-  deleteTitle: 'Are you sure you want to delete this orders?',
-  cancelBtn: 'CANCEL',
-  confirmBtn: 'DELETE',
+  deleteTitle: 'Are you sure you want to delete this order?',
+  cancelBtn: 'Cancel',
+  confirmBtn: 'Delete',
+
+  createProductTitle: 'Create product',
+  createProductConfirm: 'Create',
+
+  confirmCloseTitle: 'You have unsaved changes. Leave?',
+  confirmLeave: 'Leave anyway',
+
+  fields: {
+    title: 'Title',
+    serialNumber: 'Serial number (e.g. 123)',
+    usd: 'USD',
+    uah: 'UAH',
+  },
+
+  errors: {
+    required: 'Required',
+    serialMin: 'At least 3 digits',
+    serialMax: 'Too large',
+  },
+
+  productTypes: {
+    phone: 'Phone',
+    laptop: 'Laptop',
+    monitor: 'Monitor',
+  },
 }
 
 export default modals

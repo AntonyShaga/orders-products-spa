@@ -6,6 +6,7 @@ export interface CommonDictionary {
 
 export interface OrdersPageDictionary {
   title: string
+  addOrder: string
 }
 export interface OrderCardDictionary extends CommonDictionary {
   product: {
@@ -81,6 +82,29 @@ export interface ModalDictionary {
   confirmBtn?: string
   saveBtn?: string
   createTitle?: string
+  createProductTitle: string
+  createProductConfirm: string
+  confirmCloseTitle: string
+  confirmLeave: string
+
+  fields: {
+    title: string
+    serialNumber: string
+    usd: string
+    uah: string
+  }
+
+  errors: {
+    required: string
+    serialMin: string
+    serialMax: string
+  }
+
+  productTypes: {
+    phone: string
+    laptop: string
+    monitor: string
+  }
 }
 
 export interface AuthDictionary {

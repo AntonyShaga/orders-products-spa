@@ -3,6 +3,7 @@ import { OrdersDictionary } from '../types'
 const orders: OrdersDictionary = {
   page: {
     title: 'Orders',
+    addOrder: 'Add order',
   },
   orderCard: {
     orderLabel: 'Order',
