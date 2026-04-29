@@ -23,8 +23,8 @@ async function verifyToken(token: string) {
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
-  const hasLocale = locales.some((l) => {
-    return pathname === `/${l}` || pathname.startsWith(`/${l}/`)
+  const hasLocale = locales.some((locale) => {
+    return pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
   })
 
   if (!hasLocale) {
@@ -37,25 +37,30 @@ export async function middleware(req: NextRequest) {
   const purePath = '/' + segments.slice(2).join('/')
 
   const isAuthPage = purePath === '/login' || purePath === '/login/'
-  const isProtectedPage = ['/orders', '/products'].some((p) => purePath.startsWith(p))
+  const isProtectedPage = ['/orders', '/products'].some((path) => purePath.startsWith(path))
   const isRoot = purePath === '/' || purePath === ''
 
-  const token = req.cookies.get('accessToken')?.value
-  const isValidToken = token ? await verifyToken(token) : false
+  const accessToken = req.cookies.get('accessToken')?.value
+  const refreshToken = req.cookies.get('refreshToken')?.value
+
+  const isValidAccessToken = accessToken ? await verifyToken(accessToken) : false
+  const hasRefreshToken = Boolean(refreshToken)
+
+  const isAuthenticated = isValidAccessToken || hasRefreshToken
 
   if (isRoot) {
-    if (isValidToken) {
+    if (isAuthenticated) {
       return NextResponse.redirect(new URL(`/${locale}/orders`, req.url))
-    } else {
-      return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
     }
-  }
 
-  if (!isValidToken && isProtectedPage) {
     return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
   }
 
-  if (isValidToken && isAuthPage) {
+  if (!isAuthenticated && isProtectedPage) {
+    return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
+  }
+
+  if (isAuthenticated && isAuthPage) {
     return NextResponse.redirect(new URL(`/${locale}/orders`, req.url))
   }
 

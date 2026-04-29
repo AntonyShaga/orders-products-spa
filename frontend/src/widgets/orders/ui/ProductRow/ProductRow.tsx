@@ -5,14 +5,46 @@ import './ProductRow.css'
 import { ProductRowDictionary } from '@/shared'
 import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
 import { EllipsisTooltip } from '@/shared/ui/tooltip/EllipsisTooltip'
+import React from 'react'
+import { openModal } from '@/providers/modal-provider'
+import { ModalType } from '@/providers/modal-provider/config/modalTypes'
+import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
+import Image from 'next/image'
+
 export interface ProductRowProps {
   product: Product
   orderTitle: string
   statusDict: ProductRowDictionary
+  orderId: string
   locale: string
 }
 
-export const ProductRow = ({ product, orderTitle, statusDict, locale }: ProductRowProps) => {
+export const ProductRow = ({
+  product,
+  orderTitle,
+  statusDict,
+  locale,
+  orderId,
+}: ProductRowProps) => {
+  const dispatch = useAppDispatch()
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation()
+
+    dispatch(
+      openModal({
+        type: ModalType.DELETE,
+        props: {
+          productId: product.id,
+          orderId: orderId,
+          title: product.title,
+          subtitle: product.serialNumber,
+          imageUrl: product.photo,
+          mode: 'product',
+        },
+      }),
+    )
+  }
   return (
     <div className="product-row">
       <div className="product-row__status">
@@ -24,7 +56,7 @@ export const ProductRow = ({ product, orderTitle, statusDict, locale }: ProductR
       </div>
 
       <div className="product-row__image">
-        <img src={product.photo} alt="" className="product-row__img" />
+        <Image src={product.photo} alt={product.photo} className="product-row__img" />
       </div>
 
       <div className="product-row__info">
@@ -64,7 +96,9 @@ export const ProductRow = ({ product, orderTitle, statusDict, locale }: ProductR
         />
       </div>
       <div className="product-row__delete">
-        <button className="product-row__delete-btn">🗑</button>
+        <button className="product-row__delete-btn" onClick={handleDelete}>
+          🗑
+        </button>
       </div>
     </div>
   )

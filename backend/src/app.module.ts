@@ -6,6 +6,7 @@ import { WebsocketModule } from './websocket/websocket.module';
 import { OrdersModule } from './orders/orders.module';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
+import { ProductTypesModule } from './product-types/product-types.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     OrdersModule,
     AuthModule,
+    ProductTypesModule,
   ],
   controllers: [AppController],
   providers: [AppService, WebsocketGateway],

@@ -3,32 +3,64 @@
 import { BaseModal } from '@/shared/ui/modals/BaseModal'
 import { ModalDictionary } from '@/shared/i18n/types'
 import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
-import { removeOrder, setOrders } from '@/entities/order/model/orderSlice'
+import { removeOrder, removeProductFromOrder, setOrders } from '@/entities/order/model/orderSlice'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/providers/store-provider'
 
 import './DeleteIncomingModal.css'
-import { deleteOrder } from '@/shared/api/client'
+import { deleteOrder, deleteProduct } from '@/shared/api/client'
+import { ActionIconButton } from '@/shared/ui/close-button/ActionIconButton'
+import { ModalActionButton } from '@/shared/ui/modal-action-button/ModalActionButton'
+import Image from 'next/image'
 
-interface DeleteModalProps {
+type DeleteModalProps = (
+  | {
+      mode: 'order'
+      orderId: string
+      productId?: never
+    }
+  | {
+      mode: 'product'
+      orderId: string
+      productId: string
+    }
+) & {
   onClose: () => void
+  dict: ModalDictionary
   title: string
   subtitle?: number
-  dict: ModalDictionary
-  id: string
+  imageUrl?: string
 }
 
-const DeleteIncomingModal = ({ onClose, dict, id, title, subtitle }: DeleteModalProps) => {
+const DeleteIncomingModal = ({
+  onClose,
+  dict,
+  productId,
+  orderId,
+  title,
+  subtitle,
+  imageUrl,
+  mode,
+}: DeleteModalProps) => {
   const dispatch = useAppDispatch()
   const orders = useSelector((state: RootState) => state.orders.orders)
 
   const handleDelete = async () => {
     const prevOrders = [...orders]
 
-    dispatch(removeOrder(id))
+    if (mode === 'order') {
+      dispatch(removeOrder(orderId))
+    } else {
+      dispatch(removeProductFromOrder({ orderId, productId }))
+    }
 
     try {
-      await deleteOrder(id)
+      if (mode === 'order') {
+        await deleteOrder(orderId)
+      } else {
+        await deleteProduct(productId)
+      }
+
       onClose()
     } catch {
       dispatch(setOrders(prevOrders))
@@ -37,44 +69,46 @@ const DeleteIncomingModal = ({ onClose, dict, id, title, subtitle }: DeleteModal
 
   return (
     <BaseModal onClose={onClose}>
-      <div className="delete-modal">
-        <button
-          type="button"
-          className="delete-modal__close"
-          onClick={onClose}
-          aria-label="Close modal"
-        >
-          ×
-        </button>
+      <div
+        className="delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="delete-modal-title"
+      >
+        <ActionIconButton variant="close" position="modal" onClick={onClose} />
 
-        <div className="delete-modal__header">
-          <h2 className="delete-modal__title">{dict.deleteTitle}</h2>
-        </div>
+        <div className="confirm-modal__inner">
+          <div className="delete-modal__header">
+            <h2 id="delete-modal-title" className="delete-modal__title">
+              {dict.deleteTitle}
+            </h2>
+          </div>
 
-        <div className="delete-modal__body">
-          <div className="delete-modal__product">
-            <span className="delete-modal__status-dot" />
+          <div className="delete-modal__body">
+            <div className="delete-modal__product">
+              {imageUrl && (
+                <div className="delete-modal__image-wrapper">
+                  <Image src={imageUrl} alt={title} className="delete-modal__image" />
+                </div>
+              )}
 
-            <div className="delete-modal__image-wrapper">
-              <img src="/monitor.png" alt="Product" className="delete-modal__image" />
-            </div>
+              <div className="delete-modal__info">
+                <div className="delete-modal__product-title">{title}</div>
 
-            <div className="delete-modal__info">
-              <div className="delete-modal__product-title">{title}</div>
-
-              {subtitle != null && <div className="delete-modal__serial">{subtitle}</div>}
+                {subtitle != null && <div className="delete-modal__serial">{subtitle}</div>}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="delete-modal__footer">
-          <button type="button" className="delete-modal__cancel" onClick={onClose}>
-            {dict.cancelBtn}
-          </button>
+          <div className="delete-modal__footer">
+            <ModalActionButton variant="accentGhost" onClick={onClose} type="button">
+              {dict.cancelBtn}
+            </ModalActionButton>
 
-          <button type="button" className="delete-modal__delete" onClick={handleDelete}>
-            {dict.confirmBtn}
-          </button>
+            <ModalActionButton variant="dangerPill" onClick={handleDelete} type="button" autoFocus>
+              {dict.confirmBtn}
+            </ModalActionButton>
+          </div>
         </div>
       </div>
     </BaseModal>

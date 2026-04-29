@@ -1,11 +1,7 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import {
-  filterProducts,
-  getProductTypes,
-  mapOrdersToProducts,
-} from '@/widgets/products/model/utils'
+import { filterProducts, mapOrdersToProducts } from '@/widgets/products/model/utils'
 
 import { useSelector } from 'react-redux'
 import { RootState } from '@/providers/store-provider'
@@ -30,8 +26,6 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
 
   const products = useMemo(() => mapOrdersToProducts(orders), [orders])
 
-  const types = useMemo(() => getProductTypes(products), [products])
-
   const filteredProducts = useMemo(
     () => filterProducts(products, selectedType),
     [products, selectedType],
@@ -52,7 +46,6 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
           setSelectedType(value)
           setPage(0)
         }}
-        types={types}
         page={page}
         total={total}
         pageSize={pageSize}

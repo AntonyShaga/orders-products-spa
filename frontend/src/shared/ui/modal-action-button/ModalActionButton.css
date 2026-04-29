@@ -1,0 +1,72 @@
+.modal-action-btn {
+    border: 0;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.modal-action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.modal-action-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.modal-action-btn--secondary {
+    padding: 10px 18px;
+
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+
+    background: var(--color-surface);
+    color: var(--color-text);
+}
+
+.modal-action-btn--primary {
+    padding: 10px 18px;
+
+    border-radius: 10px;
+    border: 0;
+
+    background: var(--color-accent);
+    color: var(--color-text);
+}
+.modal-action-btn--accentGhost {
+    background: transparent;
+    color: var(--color-surface);
+
+    font-size: 16px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.modal-action-btn--dangerPill {
+    min-width: 182px;
+    height: 50px;
+
+    padding: 0 28px;
+
+    border-radius: 999px;
+    border: 0;
+
+    background: var(--color-surface);
+    color: var(--color-danger);
+
+    font-size: 16px;
+    font-weight: 700;
+
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+
+    box-shadow: 0 10px 24px rgba(74, 74, 74, 0.18);
+}
+
+@media (max-width: 768px) {
+    .modal-action-btn--dangerPill {
+        min-width: 160px;
+    }
+}

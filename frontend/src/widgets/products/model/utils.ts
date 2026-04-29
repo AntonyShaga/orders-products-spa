@@ -9,10 +9,6 @@ export const mapOrdersToProducts = (orders: Order[]) => {
   )
 }
 
-export const getProductTypes = (products: ReturnType<typeof mapOrdersToProducts>) => {
-  return Array.from(new Set(products.map((p) => p.type)))
-}
-
 export const filterProducts = (
   products: ReturnType<typeof mapOrdersToProducts>,
   type: string | null,

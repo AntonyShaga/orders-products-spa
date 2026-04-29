@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Order } from './types'
+import { Order, Product } from './types'
 
 interface OrderState {
   orders: Order[]
@@ -19,6 +19,20 @@ export const orderSlice = createSlice({
       state.orders = action.payload
     },
 
+    addOrder: (state, action: PayloadAction<Order>) => {
+      state.orders.unshift(action.payload)
+    },
+
+    addProductToOrder: (state, action: PayloadAction<Product>) => {
+      const product = action.payload
+
+      const order = state.orders.find((o) => o.id === product.order)
+
+      if (order) {
+        order.products.push(product)
+      }
+    },
+
     setSelectedOrder: (state, action: PayloadAction<string | null>) => {
       state.selectedOrderId = action.payload
     },
@@ -30,9 +44,29 @@ export const orderSlice = createSlice({
         state.selectedOrderId = null
       }
     },
+
+    removeProductFromOrder: (
+      state,
+      action: PayloadAction<{ orderId: string; productId: string }>,
+    ) => {
+      const { orderId, productId } = action.payload
+
+      const order = state.orders.find((o) => o.id === orderId)
+
+      if (!order) return
+
+      order.products = order.products.filter((p) => p.id !== productId)
+    },
   },
 })
 
-export const { setOrders, setSelectedOrder, removeOrder } = orderSlice.actions
+export const {
+  setOrders,
+  addOrder,
+  addProductToOrder,
+  setSelectedOrder,
+  removeOrder,
+  removeProductFromOrder,
+} = orderSlice.actions
 
 export const orderReducer = orderSlice.reducer

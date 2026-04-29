@@ -19,20 +19,19 @@ export class AuthService {
       where: { email },
     });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
+    if (!user) throw new UnauthorizedException('Invalid credentials');
 
     const isPasswordValid = await argon2.verify(user.password, password);
 
-    if (!isPasswordValid) {
+    if (!isPasswordValid)
       throw new UnauthorizedException('Invalid credentials');
-    }
 
-    const accessToken = await this.signAccessToken(user.id, user.email);
+    const tokens = await this.generateTokens(user.id, user.email);
+
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     return {
-      accessToken,
+      ...tokens,
       user: {
         id: user.id,
         email: user.email,
@@ -45,9 +44,7 @@ export class AuthService {
       where: { email },
     });
 
-    if (existingUser) {
-      throw new ConflictException('User already exists');
-    }
+    if (existingUser) throw new ConflictException('User already exists');
 
     const hashedPassword = await argon2.hash(password);
 
@@ -58,10 +55,12 @@ export class AuthService {
       },
     });
 
-    const accessToken = await this.signAccessToken(user.id, user.email);
+    const tokens = await this.generateTokens(user.id, user.email);
+
+    await this.saveRefreshToken(user.id, tokens.refreshToken);
 
     return {
-      accessToken,
+      ...tokens,
       user: {
         id: user.id,
         email: user.email,
@@ -69,10 +68,72 @@ export class AuthService {
     };
   }
 
-  private async signAccessToken(userId: string, email: string) {
-    return this.jwtService.signAsync({
-      userId,
-      email,
+  async refresh(refreshToken: string) {
+    const tokens = await this.prisma.refreshToken.findMany();
+
+    for (const token of tokens) {
+      const isValid = await argon2.verify(token.token, refreshToken);
+
+      if (isValid) {
+        await this.prisma.refreshToken.delete({
+          where: { id: token.id },
+        });
+
+        const user = await this.prisma.user.findUnique({
+          where: { id: token.userId },
+        });
+
+        if (!user) throw new UnauthorizedException();
+
+        const newTokens = await this.generateTokens(user.id, user.email);
+
+        await this.saveRefreshToken(user.id, newTokens.refreshToken);
+
+        return newTokens;
+      }
+    }
+
+    throw new UnauthorizedException();
+  }
+
+  async logout(refreshToken: string) {
+    const tokens = await this.prisma.refreshToken.findMany();
+
+    for (const token of tokens) {
+      const isValid = await argon2.verify(token.token, refreshToken);
+
+      if (isValid) {
+        await this.prisma.refreshToken.delete({
+          where: { id: token.id },
+        });
+        return;
+      }
+    }
+
+    throw new UnauthorizedException();
+  }
+
+  private async generateTokens(userId: string, email: string) {
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync({ userId, email }, { expiresIn: '15m' }),
+      this.jwtService.signAsync({ userId, email }, { expiresIn: '7d' }),
+    ]);
+
+    return { accessToken, refreshToken };
+  }
+
+  private async saveRefreshToken(userId: string, refreshToken: string) {
+    const hashedRefreshToken = await argon2.hash(refreshToken);
+
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7);
+
+    await this.prisma.refreshToken.create({
+      data: {
+        userId,
+        token: hashedRefreshToken,
+        expiresAt,
+      },
     });
   }
 }

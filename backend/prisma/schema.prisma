@@ -2,7 +2,6 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider     = "prisma-client"
   output       = "../generated/prisma"
@@ -13,6 +12,19 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id       String @id @default(cuid())
+  email    String @unique
+  password String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  lastLogin DateTime?
+
+  refreshTokens RefreshToken[]
+  orders        Order[]
+}
+
 model Order {
   id          String   @id @default(cuid())
   title       String
@@ -21,6 +33,9 @@ model Order {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   products Product[]
 }
@@ -36,7 +51,7 @@ model Product {
   date          DateTime
 
   orderId String
-  order   Order  @relation(fields: [orderId], references: [id])
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   guaranteeStart DateTime
   guaranteeEnd   DateTime
@@ -54,23 +69,10 @@ model Price {
   isDefault Boolean
 
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model User {
-  id       String @id @default(cuid())
-  email    String @unique
-  password String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  lastLogin DateTime?
-
-  refreshTokens RefreshToken[]
 }
 
 model RefreshToken {
@@ -84,4 +86,9 @@ model RefreshToken {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ProductType {
+  key  String @id
+  icon String
 }

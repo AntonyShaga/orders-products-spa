@@ -5,7 +5,11 @@ type ApiResponse<T> = {
   error: string | null
 }
 
-export async function apiClient<T>(path: string, options?: RequestInit): Promise<ApiResponse<T>> {
+export async function apiClient<T>(
+  path: string,
+  options?: RequestInit,
+  retry = true,
+): Promise<ApiResponse<T>> {
   try {
     const res = await fetch(`${BASE}${path}`, {
       credentials: 'include',
@@ -16,16 +20,29 @@ export async function apiClient<T>(path: string, options?: RequestInit): Promise
       ...options,
     })
 
-    if (res.status === 401) {
+    if (res.status !== 401) {
+      if (!res.ok) {
+        return { data: null, error: 'request failed' }
+      }
+
+      const data = (await res.json()) as T
+      return { data, error: null }
+    }
+
+    if (!retry) {
       return { data: null, error: 'unauthorized' }
     }
 
-    if (!res.ok) {
-      return { data: null, error: 'request failed' }
+    const refreshRes = await fetch(`${BASE}/auth/refresh`, {
+      method: 'POST',
+      credentials: 'include',
+    })
+
+    if (!refreshRes.ok) {
+      return { data: null, error: 'unauthorized' }
     }
 
-    const data = (await res.json()) as T
-    return { data, error: null }
+    return apiClient<T>(path, options, false)
   } catch {
     return { data: null, error: 'network error' }
   }

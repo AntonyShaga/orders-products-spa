@@ -1,42 +1,28 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { ModalType, ModalPayloadMap } from '../config/modalTypes'
 
-export type ModalState =
-  | { type: null; props: null }
-  | {
-      [K in ModalType]: {
-        type: K
-        props: ModalPayloadMap[K]
-      }
-    }[ModalType]
+type ActiveModal = {
+  [K in ModalType]: {
+    type: K
+    props: ModalPayloadMap[K]
+  }
+}[ModalType]
 
-const initialState: ModalState = {
-  type: null,
-  props: null,
-} as ModalState
+export type ModalState = ActiveModal[]
+
+const initialState: ModalState = []
 
 export const modalSlice = createSlice({
   name: 'modal',
-  initialState,
+  initialState: initialState as ModalState,
   reducers: {
-    openModal: (
-      state,
-      action: PayloadAction<
-        {
-          [K in ModalType]: {
-            type: K
-            props: ModalPayloadMap[K]
-          }
-        }[ModalType]
-      >,
-    ) => {
-      return {
-        type: action.payload.type,
-        props: action.payload.props,
-      }
+    openModal: (state, action: PayloadAction<ActiveModal>) => {
+      state.push(action.payload)
     },
 
-    closeModal: () => initialState,
+    closeModal: (state) => {
+      state.pop()
+    },
   },
 })
 

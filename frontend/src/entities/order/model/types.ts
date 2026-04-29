@@ -1,7 +1,7 @@
 export interface Price {
   value: number
   symbol: string
-  isDefault: number
+  isDefault: boolean
 }
 
 export interface Guarantee {
@@ -30,3 +30,5 @@ export interface Order {
   description: string
   products: Product[]
 }
+
+export type CreateProductPayload = Omit<Product, 'id' | 'order' | 'date'> & { orderId: string }

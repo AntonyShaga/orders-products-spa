@@ -4,7 +4,7 @@
   grid-template-columns:
     minmax(0, 8px)
     minmax(0, 40px)
-    minmax(0, 0.7fr)
+    minmax(0, 0.8fr)
     minmax(0, 80px)
     auto
     auto
@@ -35,7 +35,7 @@
 
 .product-row__img {
   width: 40px;
-  height: 30px;
+  height: 40px;
   object-fit: contain;
 }
 

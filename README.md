@@ -1,129 +1,126 @@
 # Orders & Products SPA
 
-## 📌 Project Description
+## Overview
 
-SPA application for managing orders and products.
+Full-stack SPA for managing orders and products, built with **Next.js (SSR)** and **NestJS**.
 
-Implemented features:
+The project demonstrates:
 
-* orders list
-* viewing products inside an order
-* deleting orders via modal window
-* separate products page
-* product filtering
-* active sessions counter (WebSocket)
+* scalable frontend architecture
+* secure authentication flow (JWT + refresh tokens)
+* real-time updates via WebSocket
+* SSR + client state synchronization
 
 ---
 
-## 🧩 Implemented Functionality
+## Features
 
 ### Orders
 
-* display list of orders
-* display:
-
-    * order title
-    * number of products
-    * dates (2 formats)
-    * total price (2 currencies)
-* open order details panel (side view)
-* close details panel
-* delete order via pop-up
-
----
+* orders list with totals (multi-currency)
+* open/close order details panel
+* create & delete orders
+* real-time calculated totals
 
 ### Products
 
-* display all products
-* display:
+* full products list
+* filtering by type
+* create & delete products
+* guarantee period display
 
-    * name
-    * type
-    * guarantee dates (2 formats)
-    * price (2 currencies)
-    * related order
-* filtering by product type (select)
+### Authentication
 
----
+* login / register
+* JWT (HttpOnly cookies)
+* refresh token flow
+* protected routes
 
-### Navigation
+### Real-time
 
-* menu with routes:
-
-    * Orders
-    * Products
-
----
-
-### TopMenu
-
-* real-time date and time
 * active sessions counter (WebSocket)
+* each tab = separate session
+
+### UX Enhancements
+
+* i18n (EN / RU / UA)
+* dark / light theme (persisted)
+* lazy-loaded modals
+* animations between routes
 
 ---
 
-## 🔧 Additional Features
+## Architecture Highlights
 
-* 🔐 Authentication (Login / Logout)
-* 🍪 JWT (HttpOnly cookies)
-* 🌙 Dark / Light theme
-* 🌍 Language switcher (i18n)
-* 💾 WebStorage (saving user preferences like theme)
-* ✅ Unit tests
-
----
-
-## 🔌 WebSocket
-
-* implemented using Socket.io
-* each browser tab = отдельная сессия
-* server tracks active connections
-* clients receive real-time updates
+* **Next.js App Router (SSR + hydration)**
+* **Redux Toolkit (global state)**
+* **Feature-based structure (entities / widgets / shared / providers)**
+* **API layer with auto-refresh logic**
+* **Modal system with stack & lazy loading**
 
 ---
 
-## 🛠 Technologies
+## Tech Stack
 
-### Required (by task)
+### Frontend
 
-* React (Next.js)
-* Redux Toolkit
-* Next.js App Router
-* WebSocket (Socket.io)
-* REST API (Fetch)
-* Bootstrap
-* BEM (CSS architecture)
-* Git
-* Docker
-
----
-
-### Additional (Junior+ level)
-
+* Next.js 16 (App Router, SSR)
+* React 19
 * TypeScript
-* SSR (Next.js)
-* i18n
-* JWT (cookies)
-* WebStorage
-* Lazy loading (modals)
-* Unit tests
+* Redux Toolkit
+* Recharts (charts)
+* Socket.io-client
+
+### Backend
+
+* NestJS
+* Prisma + PostgreSQL
+* JWT (access + refresh)
+* Argon2 (password hashing)
+* WebSocket (Socket.io)
+
+## Infrastructure
+
+The application is containerized using Docker Compose and includes:
+
+- PostgreSQL database
+- NestJS backend
+- Next.js frontend
+- Nginx reverse proxy
+
+Nginx is used to route HTTP requests and handle WebSocket connections.
+
+### Other
+
+* Docker / Docker Compose
+* Bootstrap (layout)
+* BEM (CSS structure)
 
 ---
 
-## 🐳 Docker запуск
+##  WebSocket
+
+* implemented with Socket.io
+* server tracks active connections
+* clients receive updates in real-time
+* used for active sessions counter
+
+---
+
+## Run with Docker
 
 ```bash
 docker-compose up --build
 ```
 
-После запуска:
+After start:
 
 * Frontend: http://localhost:3001
 * Backend: http://localhost:3000
 
 ---
 
-## ▶️ Local Setup
+##  Local Setup
 
 ### Backend
 
@@ -141,23 +138,20 @@ npm install
 npm run dev
 ```
 
-After запуск:
-
-* Frontend: http://localhost:3001
-* Backend: http://localhost:3000
-
 ---
 
-## ⚙️ Environment Variables
+## ⚙Environment Variables
+
+> ⚠️ JWT_SECRET must be identical in both frontend and backend.
+> It is used to sign tokens on the backend and verify them in Next.js middleware.
 
 ### frontend/.env
 
 ```
 NEXT_PUBLIC_API_URL=http://localhost:3000
 INTERNAL_API_URL=http://backend:3000
+JWT_SECRET=secret
 ```
-
----
 
 ### backend/.env
 
@@ -168,7 +162,7 @@ JWT_SECRET=secret
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
 ```
 frontend/
@@ -177,35 +171,55 @@ frontend/
 ├── widgets/
 ├── providers/
 ├── shared/
+
+backend/
+├── auth/
+├── orders/
+├── product-types/
+├── prisma/
 ```
 
 ---
 
-## 🧪 Self-check
+## Testing
 
-The project can be started from scratch:
+* unit tests
+* basic backend test 
+
+---
+
+##  Database
+
+Schema provided in `.mwb` format
+Location: `/db/schema.mwb`
+
+---
+
+## Self-check
+
+Project supports full clean run:
 
 ```bash
 docker-compose up --build
 ```
 
-Working features:
+Tested features:
 
-* Orders
-* Products
-* WebSocket
-* filtering
-* modals
 * authentication
-* theme switching
-* language switching
+* orders & products CRUD
+* filtering
+* WebSocket
+* SSR data loading
+* i18n
+* theme persistence
 
 ---
 
-## 🗄 Database
+##  Notes
 
-Database schema is provided in `.mwb` format
-Location: `/db/schema.mwb`
-(Open using MySQL Workbench)
+This project intentionally goes beyond the basic requirements and demonstrates **junior+ → middle-level capabilities**, including:
 
----
+* SSR architecture
+* token refresh flow
+* modular frontend design
+* real-time features
