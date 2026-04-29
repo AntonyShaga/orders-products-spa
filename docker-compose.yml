@@ -5,7 +5,7 @@ services:
     image: postgres:15
     restart: always
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -20,9 +20,6 @@ services:
       - postgres
     env_file:
       - ./backend/.env
-    environment:
-      DATABASE_URL: postgres://postgres:postgres@postgres:5432/nexus
-    command: sh -c "npx prisma migrate deploy && npm run start"
 
   frontend:
     build: ./frontend
@@ -46,4 +43,3 @@ services:
 
 volumes:
   postgres_data:
-    name: postgres_data_global
