@@ -6,6 +6,7 @@ import {
 import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import * as argon2 from 'argon2';
+import { Prisma } from '../../generated/prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -69,6 +70,24 @@ export class AuthService {
   }
 
   async refresh(refreshToken: string) {
+    try {
+      return await this._refresh(refreshToken);
+    } catch (error: unknown) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        (error.code === 'P1000' || error.code === 'P1017')
+      ) {
+        await this.prisma.$disconnect();
+        await this.prisma.$connect();
+
+        return await this._refresh(refreshToken);
+      }
+
+      throw error;
+    }
+  }
+
+  private async _refresh(refreshToken: string) {
     const tokens = await this.prisma.refreshToken.findMany();
 
     for (const token of tokens) {
