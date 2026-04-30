@@ -1,0 +1,41 @@
+# deps
+node_modules
+npm-debug.log*
+yarn.lock
+pnpm-lock.yaml
+
+# next build
+.next
+out
+dist
+
+# git
+.git
+.gitignore
+
+# env
+.env
+.env.*
+
+# logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode
+.idea
+
+# tests
+coverage
+
+# docker (не нужен внутри контейнера)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# misc
+*.md

@@ -1,0 +1,35 @@
+# deps
+node_modules
+npm-debug.log*
+
+# build
+dist
+coverage
+
+# git
+.git
+.gitignore
+
+# env
+.env
+.env.*
+
+# logs
+logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode
+.idea
+
+# docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# misc
+*.md
