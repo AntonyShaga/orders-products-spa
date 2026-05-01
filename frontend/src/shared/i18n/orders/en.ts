@@ -4,6 +4,7 @@ const orders: OrdersDictionary = {
   page: {
     title: 'Orders',
     addOrder: 'Add order',
+    empty: 'No orders',
   },
   orderCard: {
     orderLabel: 'Order',
@@ -22,6 +23,10 @@ const orders: OrdersDictionary = {
       free: 'Free',
       repair: 'In repair',
     },
+  },
+  toast: {
+    created: 'Order "{{title}}" created',
+    errorCreate: 'Error while creating order',
   },
 }
 
