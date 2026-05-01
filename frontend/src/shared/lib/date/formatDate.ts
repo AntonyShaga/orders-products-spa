@@ -25,3 +25,11 @@ export const formatDateShort = (date: string, locale: string) => {
     month: '2-digit',
   }).format(new Date(date))
 }
+
+export const formatTime = (date: Date, locale: string) => {
+  return new Intl.DateTimeFormat(normalizeLocale(locale), {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date)
+}

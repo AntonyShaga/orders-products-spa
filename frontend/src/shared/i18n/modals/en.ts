@@ -29,6 +29,20 @@ const modals: ModalDictionary = {
     laptop: 'Laptop',
     monitor: 'Monitor',
   },
+  toast: {
+    product: {
+      created: 'Product "{{title}}" created',
+      deleted: 'Product "{{title}}" deleted',
+      errorCreate: 'Error while creating product',
+      errorDelete: 'Error while deleting product',
+    },
+    order: {
+      created: 'Order "{{title}}" created',
+      deleted: 'Order "{{title}}" deleted',
+      errorCreate: 'Error while creating order',
+      errorDelete: 'Error while deleting order',
+    },
+  },
 }
 
 export default modals

@@ -47,6 +47,7 @@ The project demonstrates:
 * dark / light theme (persisted)
 * lazy-loaded modals
 * animations between routes
+* **toast notification system (queue, animations, pause on hover)**
 
 ---
 
@@ -57,6 +58,7 @@ The project demonstrates:
 * **Feature-based structure (entities / widgets / shared / providers)**
 * **API layer with auto-refresh logic**
 * **Modal system with stack & lazy loading**
+* **Event-driven UI (eventBus for cross-component communication)**
 
 ---
 
@@ -140,7 +142,7 @@ npm run dev
 
 ---
 
-## ⚙Environment Variables
+## Environment Variables
 
 > ⚠️ JWT_SECRET must be identical in both frontend and backend.
 > It is used to sign tokens on the backend and verify them in Next.js middleware.
@@ -156,8 +158,10 @@ JWT_SECRET=secret
 ### backend/.env
 
 ```
-DATABASE_URL=postgres://postgres:postgres@postgres:5432/nexus
+PORT=3000
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nexus?connect_timeout=5&pool_timeout=5
 JWT_SECRET=secret
+CORS_ORIGIN=http://localhost:3001
 ```
 
 ---
@@ -184,6 +188,7 @@ backend/
 ## Testing
 
 * unit tests
+* integration tests
 * basic backend test 
 
 ---

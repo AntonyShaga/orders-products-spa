@@ -10,6 +10,7 @@ import { openModal } from '@/providers/modal-provider'
 import { ModalType } from '@/providers/modal-provider/config/modalTypes'
 import { useAppDispatch } from '@/providers/modal-provider/config/hooks'
 import Image from 'next/image'
+import TrashIcon from '@/shared/assets/icons/trash.svg'
 
 export interface ProductRowProps {
   product: Product
@@ -97,7 +98,7 @@ export const ProductRow = ({
       </div>
       <div className="product-row__delete">
         <button className="product-row__delete-btn" onClick={handleDelete}>
-          🗑
+          <Image src={TrashIcon} alt="Delete product" width={16} height={16} />
         </button>
       </div>
     </div>

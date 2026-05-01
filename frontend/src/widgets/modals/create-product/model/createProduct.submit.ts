@@ -3,6 +3,8 @@ import { addProductToOrder } from '@/entities/order/model/orderSlice'
 import { AppDispatch } from '@/providers/store-provider'
 import { ZodSchema } from 'zod'
 import type { ProductType } from '@/entities/product-types/model/productTypeSlice'
+import { eventBus } from '@/shared/lib/eventBus'
+import { ModalDictionary } from '@/shared'
 
 type ProductTypeKey = ProductType['key']
 type Currency = 'USD' | 'UAH'
@@ -33,6 +35,7 @@ type SubmitCreateProductParams = {
   dispatch: AppDispatch
   onClose: () => void
   productImages: Record<ProductTypeKey, string>
+  dict: ModalDictionary
 }
 
 export const submitCreateProduct = async ({
@@ -43,6 +46,7 @@ export const submitCreateProduct = async ({
   dispatch,
   onClose,
   productImages,
+  dict,
 }: SubmitCreateProductParams) => {
   e.preventDefault()
 
@@ -102,8 +106,19 @@ export const submitCreateProduct = async ({
 
     if (res.data) {
       dispatch(addProductToOrder(res.data))
+
+      eventBus.emit('TOAST_SHOW', {
+        message: dict.toast.product.created.replace('{{title}}', res.data.title),
+        type: 'success',
+      })
+
       onClose()
     }
+  } catch {
+    eventBus.emit('TOAST_SHOW', {
+      message: dict.toast.product.errorCreate,
+      type: 'error',
+    })
   } finally {
     state.setIsSubmitting(false)
   }

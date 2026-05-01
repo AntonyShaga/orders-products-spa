@@ -28,6 +28,20 @@ const modals: ModalDictionary = {
     laptop: 'Ноутбук',
     monitor: 'Монитор',
   },
+  toast: {
+    product: {
+      created: 'Продукт "{{title}}" создан',
+      deleted: 'Продукт "{{title}}" удалён',
+      errorCreate: 'Ошибка при создании продукта',
+      errorDelete: 'Ошибка при удалении продукта',
+    },
+    order: {
+      created: 'Заказ "{{title}}" создан',
+      deleted: 'Заказ "{{title}}" удалён',
+      errorCreate: 'Ошибка при создании заказа',
+      errorDelete: 'Ошибка при удалении заказа',
+    },
+  },
 }
 
 export default modals

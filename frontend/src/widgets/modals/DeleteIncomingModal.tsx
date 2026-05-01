@@ -12,6 +12,7 @@ import { deleteOrder, deleteProduct } from '@/shared/api/client'
 import { ActionIconButton } from '@/shared/ui/close-button/ActionIconButton'
 import { ModalActionButton } from '@/shared/ui/modal-action-button/ModalActionButton'
 import Image from 'next/image'
+import { eventBus } from '@/shared/lib/eventBus'
 
 type DeleteModalProps = (
   | {
@@ -47,23 +48,39 @@ const DeleteIncomingModal = ({
 
   const handleDelete = async () => {
     const prevOrders = [...orders]
+    const isOrder = mode === 'order'
 
-    if (mode === 'order') {
+    if (isOrder) {
       dispatch(removeOrder(orderId))
     } else {
       dispatch(removeProductFromOrder({ orderId, productId }))
     }
 
     try {
-      if (mode === 'order') {
+      if (isOrder) {
         await deleteOrder(orderId)
+
+        eventBus.emit('TOAST_SHOW', {
+          message: dict.toast.order.deleted.replace('{{title}}', title),
+          type: 'info',
+        })
       } else {
         await deleteProduct(productId)
+
+        eventBus.emit('TOAST_SHOW', {
+          message: dict.toast.product.deleted.replace('{{title}}', title),
+          type: 'info',
+        })
       }
 
       onClose()
     } catch {
       dispatch(setOrders(prevOrders))
+
+      eventBus.emit('TOAST_SHOW', {
+        message: isOrder ? dict.toast.order.errorDelete : dict.toast.product.errorDelete,
+        type: 'error',
+      })
     }
   }
 

@@ -1,4 +1,7 @@
 import { RootState } from '@/providers/store-provider'
+import { createSelector } from '@reduxjs/toolkit'
+
+const selectOrders = (state: RootState) => state.orders.orders
 
 export const getPriceBySymbol = (
   prices: { value: number; symbol: string }[] | undefined,
@@ -22,9 +25,15 @@ export const selectOrderTotal = (state: RootState, orderId: string) => {
   )
 }
 
-export const selectOrdersWithTotals = (state: RootState) => {
-  return state.orders.orders.map((order) => ({
+export const selectOrdersWithTotals = createSelector([selectOrders], (orders) => {
+  return orders.map((order) => ({
     ...order,
-    total: selectOrderTotal(state, order.id),
+    total: order.products?.reduce(
+      (acc, product) => ({
+        USD: acc.USD + getPriceBySymbol(product.price, 'USD'),
+        UAH: acc.UAH + getPriceBySymbol(product.price, 'UAH'),
+      }),
+      { USD: 0, UAH: 0 },
+    ) ?? { USD: 0, UAH: 0 },
   }))
-}
+})

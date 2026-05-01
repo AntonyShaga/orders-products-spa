@@ -4,6 +4,7 @@ const orders: OrdersDictionary = {
   page: {
     title: 'Замовлення',
     addOrder: 'Додати замовлення',
+    empty: 'Немає замовлень',
   },
   orderCard: {
     orderLabel: 'Замовлення',
@@ -22,6 +23,10 @@ const orders: OrdersDictionary = {
       free: 'Вільний',
       repair: 'В ремонті',
     },
+  },
+  toast: {
+    created: 'Замовлення "{{title}}" створено',
+    errorCreate: 'Помилка при створенні замовлення',
   },
 }
 

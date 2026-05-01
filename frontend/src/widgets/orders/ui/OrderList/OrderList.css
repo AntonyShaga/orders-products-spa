@@ -109,3 +109,21 @@
   transform: translateX(40px);
   opacity: 0;
 }
+
+.order-list__empty {
+  width: 100%;
+  padding: 40px 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 14px;
+  color: var(--color-text-secondary);
+
+  background: var(--color-surface);
+  border: 1px dashed var(--color-border);
+  border-radius: 6px;
+
+  text-align: center;
+}

@@ -7,6 +7,7 @@ export interface CommonDictionary {
 export interface OrdersPageDictionary {
   title: string
   addOrder: string
+  empty: string
 }
 export interface OrderCardDictionary extends CommonDictionary {
   product: {
@@ -31,6 +32,7 @@ export interface OrdersDictionary {
   page: OrdersPageDictionary
   orderCard: OrderCardDictionary
   orderDetails: OrderDetailsDictionary
+  toast: Pick<ToastDictionary['order'], 'created' | 'errorCreate'>
 }
 
 export interface ProductsPageDictionary {
@@ -104,6 +106,23 @@ export interface ModalDictionary {
     phone: string
     laptop: string
     monitor: string
+  }
+  toast: ToastDictionary
+}
+
+export interface ToastDictionary {
+  product: {
+    created: string
+    deleted: string
+    errorCreate: string
+    errorDelete: string
+  }
+
+  order: {
+    created: string
+    deleted: string
+    errorCreate: string
+    errorDelete: string
   }
 }
 
