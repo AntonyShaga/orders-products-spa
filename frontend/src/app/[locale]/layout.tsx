@@ -2,6 +2,7 @@ import { StoreProvider } from '@/providers/store-provider/ui/StoreProvider'
 import { serverFetch } from '@/shared/api/server'
 import React from 'react'
 import { AuthBootstrap } from '@/shared/auth/AuthBootstrap'
+import { Toast } from '@/shared/ui/toast/Toast'
 
 export default async function LocaleLayout({ children }: { children: React.ReactNode }) {
   const orders = await serverFetch('/orders')
@@ -9,6 +10,7 @@ export default async function LocaleLayout({ children }: { children: React.React
 
   return (
     <StoreProvider initialOrders={orders.data || []} initialProductTypes={productTypes.data || []}>
+      <Toast />
       <AuthBootstrap />
       {children}
     </StoreProvider>
