@@ -15,8 +15,9 @@ import { Pagination } from '@/shared/ui/pagination/Pagination'
 import { usePagination } from '@/shared/lib/hooks/usePagination'
 import { createOrder } from '@/shared/api/client/orders'
 import { ActionIconButton } from '@/shared/ui/close-button/ActionIconButton'
+import { eventBus } from '@/shared/lib/eventBus'
 
-interface OrdersPageState {
+type OrdersPageState = {
   dict: OrdersDictionary
   locale: string
 }
@@ -62,11 +63,24 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
 
     setPage(nextPage)
   }
-  const handleCreate = async () => {
-    const res = await createOrder()
 
-    if (res.data) {
-      dispatch(addOrder(res.data))
+  const handleCreate = async () => {
+    try {
+      const res = await createOrder()
+
+      if (res.data) {
+        dispatch(addOrder(res.data))
+
+        eventBus.emit('TOAST_SHOW', {
+          message: dict.toast.created.replace('{{title}}', res.data.title),
+          type: 'success',
+        })
+      }
+    } catch {
+      eventBus.emit('TOAST_SHOW', {
+        message: dict.toast.errorCreate,
+        type: 'error',
+      })
     }
   }
   return (
@@ -81,6 +95,8 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
       </div>
 
       <div className={`order-list ${isOpen ? 'order-list--open' : ''}`}>
+        {paginatedData.length === 0 && <div className="order-list__empty">{dict.page.empty}</div>}
+
         <div className="order-list__items">
           {paginatedData.map((order) => (
             <OrderCard

@@ -70,6 +70,7 @@ const CreateProductModal = ({ onClose, dict, orderId }: CreateProductModalProps)
       dispatch,
       onClose,
       productImages,
+      dict,
       state: {
         title,
         serialNumber,
