@@ -32,13 +32,11 @@
   background: var(--color-text-secondary);
 }
 
-
 .product-row__img {
   width: 40px;
   height: 40px;
   object-fit: contain;
 }
-
 
 .product-row__info {
   display: flex;
@@ -108,25 +106,35 @@
 .product-row__order-title {
   font-size: 13px;
   color: var(--color-text-secondary);
-
   text-align: center;
 }
 
+.product-row__delete {
+  position: relative;
+  width: 30px;
+  height: 100%;
+}
+
 .product-row__delete-btn {
+  position: absolute;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   background: none;
   border: none;
-
-  color: var(--color-text-secondary);
-
   cursor: pointer;
-  font-size: 16px;
 
-  margin: 0 auto;
-  display: block;
-
-  transition: color 0.2s;
+  transition: transform 0.15s ease, opacity 0.15s ease;
 }
 
 .product-row__delete-btn:hover {
-  color: var(--color-danger);
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+.product-row__delete-btn:hover img {
+  filter: brightness(0) saturate(100%) invert(27%) sepia(94%) saturate(742%) hue-rotate(330deg);
 }
