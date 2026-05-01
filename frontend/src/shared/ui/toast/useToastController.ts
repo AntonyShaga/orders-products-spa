@@ -13,6 +13,11 @@ export type ToastItem = {
 const LIFE = 2000
 const FADE = 400
 
+const generateId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : Math.random().toString(36).slice(2)
+
 /**
  * Manages toast lifecycle:
  * - listens for toast events
@@ -47,7 +52,7 @@ export const useToastController = () => {
       setToasts((prev) => [
         ...prev,
         {
-          id: crypto.randomUUID(),
+          id: generateId(),
           message: payload.message,
           type: payload.type,
           visible: true,
