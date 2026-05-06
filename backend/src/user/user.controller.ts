@@ -27,7 +27,7 @@ export class UserController {
   )
   uploadAvatar(@UploadedFile() file: Express.Multer.File) {
     return {
-      url: `http://localhost:3000/avatars/${file.filename}`,
+      url: `/avatars/${file.filename}`,
     };
   }
 }
