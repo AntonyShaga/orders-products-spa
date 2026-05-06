@@ -25,6 +25,7 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
   const [filteredProducts, setFilteredProducts] = useState<ReturnType<typeof mapOrdersToProducts>>(
     [],
   )
+  const [isLoading, setIsLoading] = useState(true)
 
   // Web Worker is used to offload heavy filtering from the main thread
   // (demonstration of parallel processing, not required for small datasets)
@@ -43,6 +44,7 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
 
     worker.onmessage = (e) => {
       setFilteredProducts(e.data)
+      setIsLoading(false)
     }
   }, [orders, selectedType])
 
@@ -75,7 +77,12 @@ export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
         onPageChange={setPage}
       />
 
-      <ProductsTable dictProductsTable={dict.table} products={paginatedData} locale={locale} />
+      <ProductsTable
+        dictProductsTable={dict.table}
+        products={paginatedData}
+        locale={locale}
+        isLoading={isLoading}
+      />
     </div>
   )
 }

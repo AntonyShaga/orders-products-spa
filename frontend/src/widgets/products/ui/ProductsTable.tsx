@@ -5,14 +5,16 @@ import './ProductsTable.css'
 import { ProductsTableDictionary } from '@/shared'
 import { mapProductTypeLabel } from '@/widgets/products/model/mapProductTypes'
 import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
+import { Loader } from '@/shared/ui/loader/Loader'
 
 type Props = {
   products: ReturnType<typeof mapOrdersToProducts>
   dictProductsTable: ProductsTableDictionary
   locale: string
+  isLoading: boolean
 }
 
-export const ProductsTable = ({ products, dictProductsTable, locale }: Props) => {
+export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }: Props) => {
   const {
     type,
     guarantee,
@@ -25,6 +27,15 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
     statusFree,
     productTypes,
   } = dictProductsTable
+
+  if (isLoading) {
+    return (
+      <div>
+        <Loader />
+      </div>
+    )
+  }
+
   return (
     <div className="products__table table-responsive">
       <table className="table table-hover align-middle">
@@ -40,7 +51,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
         </thead>
 
         <tbody className="products__body">
-          {products.length === 0 && (
+          {!isLoading && products.length === 0 && (
             <tr>
               <td colSpan={6} className="text-center text-muted">
                 {empty}
