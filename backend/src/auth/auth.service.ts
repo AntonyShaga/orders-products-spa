@@ -91,7 +91,7 @@ export class AuthService {
     const tokens = await this.prisma.refreshToken.findMany();
 
     for (const token of tokens) {
-      const isValid = await argon2.verify(token.token, refreshToken);
+      const isValid = await argon2.verify(token.tokenHash, refreshToken);
 
       if (isValid) {
         await this.prisma.refreshToken.delete({
@@ -119,7 +119,7 @@ export class AuthService {
     const tokens = await this.prisma.refreshToken.findMany();
 
     for (const token of tokens) {
-      const isValid = await argon2.verify(token.token, refreshToken);
+      const isValid = await argon2.verify(token.tokenHash, refreshToken);
 
       if (isValid) {
         await this.prisma.refreshToken.delete({
@@ -150,7 +150,7 @@ export class AuthService {
     await this.prisma.refreshToken.create({
       data: {
         userId,
-        token: hashedRefreshToken,
+        tokenHash: hashedRefreshToken,
         expiresAt,
       },
     });
