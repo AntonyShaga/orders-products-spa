@@ -5,7 +5,6 @@ import './ProductsTable.css'
 import { ProductsTableDictionary } from '@/shared'
 import { mapProductTypeLabel } from '@/widgets/products/model/mapProductTypes'
 import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
-import { Loader } from '@/shared/ui/loader/Loader'
 
 type Props = {
   products: ReturnType<typeof mapOrdersToProducts>
@@ -45,21 +44,27 @@ export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }
         </thead>
 
         <tbody className="products__body">
-          {isLoading && (
+          {isLoading ? (
             <tr>
-              <td colSpan={6}>
-                <Loader className="loader--inline" />
+              <td colSpan={6} className="products__loading">
+                <div className="products__loading-content">
+                  <span>{dictProductsTable.loading}</span>
+
+                  <div className="products__dots">
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
               </td>
             </tr>
-          )}
-
-          {!isLoading && safeProducts.length === 0 && (
+          ) : safeProducts.length === 0 ? (
             <tr>
               <td colSpan={6} className="text-center text-muted">
                 {empty}
               </td>
             </tr>
-          )}
+          ) : null}
 
           {!isLoading &&
             safeProducts.map((p) => (
