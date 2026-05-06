@@ -48,7 +48,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }
           {isLoading && (
             <tr>
               <td colSpan={6}>
-                <Loader />
+                <Loader className="loader--inline" />
               </td>
             </tr>
           )}

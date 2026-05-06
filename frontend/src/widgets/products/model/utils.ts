@@ -9,7 +9,7 @@ import { Order } from '@/entities/order/model/types'
  */
 export const mapOrdersToProducts = (orders: Order[]) => {
   return orders.flatMap((order) =>
-    order.items.map((item) => ({
+    (order.items ?? []).map((item) => ({
       ...item,
       orderTitle: order.title,
     })),
