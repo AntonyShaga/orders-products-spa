@@ -10,10 +10,19 @@ import { AuthModule } from './auth/auth.module';
 import { ProductTypesModule } from './product-types/product-types.module';
 import { UserModule } from './user/user.module';
 
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'),
+    }),
+
     WebsocketModule,
+
     UserModule,
+
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -22,14 +31,18 @@ import { UserModule } from './user/user.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
       path: '/graphql',
-      context: ({ req }) => ({ req }),
-    }),
 
+      context: ({ req }: { req: Request }) => ({
+        req,
+      }),
+    }),
     OrdersModule,
     AuthModule,
     ProductTypesModule,
   ],
+
   controllers: [],
+
   providers: [WebsocketGateway],
 })
 export class AppModule {}
