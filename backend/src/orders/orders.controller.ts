@@ -13,7 +13,7 @@ import { GetOrdersDto } from './dto/get-orders.dto';
 import { OrderResponseDto } from './dto/order-response.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { User } from '../common/decorators/user.decorator';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateOrderItemDto } from './dto/create-product.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('orders')
@@ -37,7 +37,7 @@ export class OrdersController {
     return this.ordersService.create(userId);
   }
   @Post('product')
-  createProduct(@Body() dto: CreateProductDto, @User('id') userId: string) {
+  createProduct(@Body() dto: CreateOrderItemDto, @User('id') userId: string) {
     return this.ordersService.createProduct(dto, userId);
   }
   @Delete('product/:id')

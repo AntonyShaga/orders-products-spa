@@ -1,4 +1,14 @@
 import { ImgHTMLAttributes } from 'react'
+import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { Provider } from 'react-redux'
+import { configureStore } from '@reduxjs/toolkit'
+
+import { orderReducer } from '@/entities/order/model/orderSlice'
+import productTypesReducer from '@/entities/product-types/model/productTypesSlice'
+import { createOrder } from '@/shared/api/client/orders'
+import { OrdersDictionary } from '@/shared'
+import { OrderList } from '@/widgets/orders/ui/OrderList/OrderList'
+import { Order } from '@/entities/order/model/types'
 
 jest.mock('next/image', () => ({
   __esModule: true,
@@ -7,20 +17,10 @@ jest.mock('next/image', () => ({
   },
 }))
 jest.mock('@/shared/assets/icons/trash.svg', () => 'svg-mock')
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import { Provider } from 'react-redux'
-import { configureStore } from '@reduxjs/toolkit'
-
-import { orderReducer } from '@/entities/order/model/orderSlice'
-import productTypesReducer from '@/entities/product-types/model/productTypesSlice'
 
 jest.mock('@/shared/api/client/orders', () => ({
   createOrder: jest.fn(),
 }))
-
-import { createOrder } from '@/shared/api/client/orders'
-import { OrdersDictionary } from '@/shared'
-import { OrderList } from '@/widgets/orders/ui/OrderList/OrderList'
 
 const dict: OrdersDictionary = {
   page: {
@@ -53,12 +53,12 @@ const dict: OrdersDictionary = {
   },
 }
 
-const mockOrder = {
+const mockOrder: Order = {
   id: 'new-order',
   title: 'New Order',
   date: new Date().toISOString(),
   description: 'test',
-  products: [],
+  items: [],
 }
 
 const createStore = () =>

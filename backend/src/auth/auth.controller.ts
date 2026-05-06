@@ -14,6 +14,10 @@ import type { Response, Request } from 'express';
 import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import type { AuthRequest } from './types/auth-request.type';
+import {
+  clearAuthCookies,
+  setAuthCookies,
+} from '../shared/cookies/setAuthCookies';
 
 type RequestWithCookies = Request & {
   cookies: {
@@ -35,19 +39,7 @@ export class AuthController {
       dto.password,
     );
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 15,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    setAuthCookies(res, accessToken, refreshToken);
 
     return {
       success: true,
@@ -65,19 +57,7 @@ export class AuthController {
       dto.password,
     );
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 15,
-    });
-
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    setAuthCookies(res, accessToken, refreshToken);
 
     return {
       success: true,
@@ -99,19 +79,7 @@ export class AuthController {
     const { accessToken, refreshToken: newRefreshToken } =
       await this.authService.refresh(refreshToken);
 
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 15,
-    });
-
-    res.cookie('refreshToken', newRefreshToken, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-    });
+    setAuthCookies(res, accessToken, newRefreshToken);
 
     return {
       success: true,
@@ -129,17 +97,7 @@ export class AuthController {
       await this.authService.logout(refreshToken);
     }
 
-    res.clearCookie('accessToken', {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-    });
-
-    res.clearCookie('refreshToken', {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: false,
-    });
+    clearAuthCookies(res);
 
     return {
       success: true,

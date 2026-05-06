@@ -9,7 +9,7 @@ export interface Guarantee {
   end: string
 }
 
-export interface Product {
+export interface OrderItem {
   id: string
   serialNumber: number
   isNew: boolean
@@ -18,8 +18,8 @@ export interface Product {
   type: string
   specification: string
   guarantee: Guarantee
-  price: Price[]
-  order: string
+  prices: Price[]
+  orderId: string
   date: string
 }
 
@@ -28,7 +28,17 @@ export interface Order {
   title: string
   date: string
   description: string
-  products: Product[]
+  items: OrderItem[]
 }
 
-export type CreateProductPayload = Omit<Product, 'id' | 'order' | 'date'> & { orderId: string }
+export type CreateOrderItemPayload = {
+  orderId: string
+  title: string
+  serialNumber: number
+  type: string
+  isNew: boolean
+  photo: string
+  specification: string
+  guarantee: Guarantee
+  prices: Price[]
+}

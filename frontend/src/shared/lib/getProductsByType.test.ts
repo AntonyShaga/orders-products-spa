@@ -1,14 +1,18 @@
 import { getProductsByType } from './getProductsByType'
-import type { Product } from '@/entities/order/model/types'
+import type { OrderItem } from '@/entities/order/model/types'
 
-const makeProduct = (type?: Product['type']): Product =>
+const makeProduct = (type?: OrderItem['type']): OrderItem =>
   ({
     type,
-  }) as Product
+  }) as OrderItem
 
 describe('getProductsByType', () => {
   test('groups products by type', () => {
-    const products: Product[] = [makeProduct('phone'), makeProduct('phone'), makeProduct('laptop')]
+    const products: OrderItem[] = [
+      makeProduct('phone'),
+      makeProduct('phone'),
+      makeProduct('laptop'),
+    ]
 
     const result = getProductsByType(products)
 
@@ -21,7 +25,7 @@ describe('getProductsByType', () => {
   })
 
   test('handles unknown type', () => {
-    const products: Product[] = [
+    const products: OrderItem[] = [
       makeProduct(undefined),
       makeProduct(undefined),
       makeProduct('phone'),

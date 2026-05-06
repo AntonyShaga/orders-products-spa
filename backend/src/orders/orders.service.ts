@@ -1,13 +1,14 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { GetOrdersDto } from './dto/get-orders.dto';
 import { PrismaService } from '../prisma/prisma.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import { CreateOrderItemDto } from './dto/create-product.dto';
+import { OrderResponseDto } from './dto/order-response.dto';
 
 @Injectable()
 export class OrdersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAll(dto: GetOrdersDto, userId: string) {
+  async getAll(dto: GetOrdersDto, userId: string): Promise<OrderResponseDto[]> {
     const orders = await this.prisma.order.findMany({
       where: {
         userId,
@@ -21,7 +22,7 @@ export class OrdersService {
           : {}),
       },
       include: {
-        products: {
+        items: {
           include: {
             prices: true,
           },
@@ -38,7 +39,7 @@ export class OrdersService {
       date: order.date.toISOString(),
       description: order.description,
 
-      products: order.products.map((p) => ({
+      items: order.items.map((p) => ({
         id: p.id,
         serialNumber: p.serialNumber,
         isNew: p.isNew ? 1 : 0,
@@ -52,18 +53,18 @@ export class OrdersService {
           end: p.guaranteeEnd.toISOString(),
         },
 
-        price: p.prices.map((pr) => ({
+        prices: p.prices.map((pr) => ({
           value: pr.value,
           symbol: pr.symbol,
           isDefault: pr.isDefault ? 1 : 0,
         })),
 
-        order: p.orderId,
+        orderId: p.orderId,
         date: p.date.toISOString(),
       })),
     }));
   }
-  async createProduct(dto: CreateProductDto, userId: string) {
+  async createProduct(dto: CreateOrderItemDto, userId: string) {
     const order = await this.prisma.order.findUnique({
       where: { id: dto.orderId },
     });
@@ -73,7 +74,7 @@ export class OrdersService {
     }
 
     try {
-      const product = await this.prisma.product.create({
+      const items = await this.prisma.orderItem.create({
         data: {
           title: dto.title,
           serialNumber: dto.serialNumber,
@@ -89,7 +90,7 @@ export class OrdersService {
           orderId: dto.orderId,
 
           prices: {
-            create: dto.price,
+            create: dto.prices,
           },
         },
         include: {
@@ -98,27 +99,27 @@ export class OrdersService {
       });
 
       return {
-        id: product.id,
-        serialNumber: product.serialNumber,
-        isNew: product.isNew,
-        photo: product.photo,
-        title: product.title,
-        type: product.type,
-        specification: product.specification,
+        id: items.id,
+        serialNumber: items.serialNumber,
+        isNew: items.isNew,
+        photo: items.photo,
+        title: items.title,
+        type: items.type,
+        specification: items.specification,
 
         guarantee: {
-          start: product.guaranteeStart.toISOString(),
-          end: product.guaranteeEnd.toISOString(),
+          start: items.guaranteeStart.toISOString(),
+          end: items.guaranteeEnd.toISOString(),
         },
 
-        price: product.prices.map((pr) => ({
+        prices: items.prices.map((pr) => ({
           value: pr.value,
           symbol: pr.symbol,
           isDefault: pr.isDefault,
         })),
 
-        order: product.orderId,
-        date: product.date.toISOString(),
+        orderId: items.orderId,
+        date: items.date.toISOString(),
       };
     } catch (e) {
       console.error('CREATE PRODUCT ERROR:', e);
@@ -140,18 +141,18 @@ export class OrdersService {
     return { success: true };
   }
   async deleteProduct(id: string, userId: string) {
-    const product = await this.prisma.product.findUnique({
+    const items = await this.prisma.orderItem.findUnique({
       where: { id },
       include: {
         order: true,
       },
     });
 
-    if (!product || product.order.userId !== userId) {
+    if (!items || items.order.userId !== userId) {
       throw new ForbiddenException();
     }
 
-    await this.prisma.product.delete({
+    await this.prisma.orderItem.delete({
       where: { id },
     });
 
@@ -190,7 +191,7 @@ export class OrdersService {
       title: order.title,
       date: order.date.toISOString(),
       description: order.description,
-      products: [],
+      items: [],
     };
   }
 }

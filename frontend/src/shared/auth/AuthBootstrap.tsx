@@ -9,6 +9,10 @@ export function AuthBootstrap() {
 
   useEffect(() => {
     void apiClient('/auth/me')
+  }, [])
+
+  useEffect(() => {
+    void apiClient('/auth/me')
   }, [pathname])
 
   return null

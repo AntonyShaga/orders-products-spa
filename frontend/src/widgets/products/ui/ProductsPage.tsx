@@ -1,39 +1,62 @@
 'use client'
 
-import { useMemo, useState } from 'react'
-import { filterProducts, mapOrdersToProducts } from '@/widgets/products/model/utils'
-
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useSelector } from 'react-redux'
 import { RootState } from '@/providers/store-provider'
 
+import { mapOrdersToProducts } from '@/widgets/products/model/utils'
 import { getProductsByType } from '@/shared/lib/getProductsByType'
+import { usePagination } from '@/shared/lib/hooks/usePagination'
 
 import { ProductsToolbar } from './ProductsToolbar'
 import { ProductsTable } from './ProductsTable'
 
 import './ProductsPage.css'
 import type { ProductsDictionary } from '@/shared'
-import { usePagination } from '@/shared/lib/hooks/usePagination'
-interface ProductsPageState {
+import { createProductsWorker } from '@/widgets/products/model/workerUrl'
+
+type ProductsPageState = {
   dict: ProductsDictionary
   locale: string
 }
 
 export const ProductsPage = ({ locale, dict }: ProductsPageState) => {
   const [selectedType, setSelectedType] = useState<string | null>(null)
+  const [filteredProducts, setFilteredProducts] = useState<ReturnType<typeof mapOrdersToProducts>>(
+    [],
+  )
+
+  // Web Worker is used to offload heavy filtering from the main thread
+  // (demonstration of parallel processing, not required for small datasets)
+  const workerRef = useRef<Worker | null>(null)
 
   const { orders } = useSelector((state: RootState) => state.orders)
 
-  const products = useMemo(() => mapOrdersToProducts(orders), [orders])
+  useEffect(() => {
+    if (!workerRef.current) {
+      workerRef.current = createProductsWorker()
+    }
 
-  const filteredProducts = useMemo(
-    () => filterProducts(products, selectedType),
-    [products, selectedType],
-  )
+    const worker = workerRef.current
+
+    worker.postMessage({ orders, selectedType })
+
+    worker.onmessage = (e) => {
+      setFilteredProducts(e.data)
+    }
+  }, [orders, selectedType])
+
+  useEffect(() => {
+    return () => {
+      workerRef.current?.terminate()
+      workerRef.current = null
+    }
+  }, [])
 
   const { page, setPage, total, pageSize, paginatedData } = usePagination(filteredProducts, 5)
 
-  const chartData = useMemo(() => getProductsByType(products), [products])
+  const chartProducts = useMemo(() => mapOrdersToProducts(orders), [orders])
+  const chartData = useMemo(() => getProductsByType(chartProducts), [chartProducts])
 
   return (
     <div className="products container">

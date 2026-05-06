@@ -9,7 +9,10 @@ export default async function LocaleLayout({ children }: { children: React.React
   const productTypes = await serverFetch('/product-types')
 
   return (
-    <StoreProvider initialOrders={orders.data || []} initialProductTypes={productTypes.data || []}>
+    <StoreProvider
+      initialOrders={orders.error ? undefined : orders.data}
+      initialProductTypes={productTypes.error ? [] : productTypes.data}
+    >
       <Toast />
       <AuthBootstrap />
       {children}

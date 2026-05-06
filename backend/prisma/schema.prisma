@@ -17,6 +17,8 @@ model User {
   email    String @unique
   password String
 
+  avatarUrl String?
+
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   lastLogin DateTime?
@@ -37,10 +39,10 @@ model Order {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  products Product[]
+  items OrderItem[]
 }
 
-model Product {
+model OrderItem {
   id            String   @id @default(cuid())
   serialNumber  Int
   isNew         Boolean
@@ -68,24 +70,28 @@ model Price {
   symbol    String
   isDefault Boolean
 
-  productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItemId String
+  orderItem   OrderItem @relation(fields: [orderItemId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([orderItemId])
 }
 
 model RefreshToken {
-  id    String @id @default(cuid())
-  token String
+  id        String @id @default(cuid())
+  tokenHash String
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   expiresAt DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model ProductType {

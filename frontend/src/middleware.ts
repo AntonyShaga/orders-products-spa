@@ -10,7 +10,8 @@ function getLocale(req: NextRequest): Locale {
   return locales.includes(match) ? match : defaultLocale
 }
 
-async function verifyToken(token: string) {
+async function verifyToken(token?: string) {
+  if (!token) return false
   try {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
     await jwtVerify(token, secret)
@@ -23,9 +24,7 @@ async function verifyToken(token: string) {
 export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
-  const hasLocale = locales.some((locale) => {
-    return pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
-  })
+  const hasLocale = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
 
   if (!hasLocale) {
     const locale = getLocale(req)
@@ -36,28 +35,50 @@ export async function middleware(req: NextRequest) {
   const locale = segments[1]
   const purePath = '/' + segments.slice(2).join('/')
 
-  const isAuthPage = purePath === '/login' || purePath === '/login/'
-  const isProtectedPage = ['/orders', '/products'].some((path) => purePath.startsWith(path))
+  const isAuthPage = purePath.startsWith('/login')
+  const isProtectedPage = ['/orders', '/products'].some((p) => purePath.startsWith(p))
   const isRoot = purePath === '/' || purePath === ''
 
   const accessToken = req.cookies.get('accessToken')?.value
   const refreshToken = req.cookies.get('refreshToken')?.value
 
-  const isValidAccessToken = accessToken ? await verifyToken(accessToken) : false
-  const hasRefreshToken = Boolean(refreshToken)
+  let isValidAccess = await verifyToken(accessToken)
 
-  const isAuthenticated = isValidAccessToken || hasRefreshToken
+  if (!isValidAccess && refreshToken) {
+    try {
+      const refreshRes = await fetch(`${process.env.INTERNAL_API_URL}/auth/refresh`, {
+        method: 'POST',
+        headers: {
+          Cookie: `refreshToken=${refreshToken}`,
+        },
+      })
+
+      if (refreshRes.ok) {
+        const setCookie = refreshRes.headers.get('set-cookie')
+
+        if (setCookie) {
+          const res = NextResponse.redirect(req.url)
+          res.headers.set('set-cookie', setCookie)
+          return res
+        }
+      }
+    } catch {}
+    isValidAccess = false
+  }
+
+  const isAuthenticated = isValidAccess
 
   if (isRoot) {
-    if (isAuthenticated) {
-      return NextResponse.redirect(new URL(`/${locale}/orders`, req.url))
-    }
-
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
+    return NextResponse.redirect(
+      new URL(`/${locale}${isAuthenticated ? '/orders' : '/login'}`, req.url),
+    )
   }
 
   if (!isAuthenticated && isProtectedPage) {
-    return NextResponse.redirect(new URL(`/${locale}/login`, req.url))
+    const res = NextResponse.redirect(new URL(`/${locale}/login`, req.url))
+    res.cookies.delete('accessToken')
+    res.cookies.delete('refreshToken')
+    return res
   }
 
   if (isAuthenticated && isAuthPage) {

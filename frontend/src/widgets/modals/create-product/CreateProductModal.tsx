@@ -4,7 +4,7 @@ import { BaseModal } from '@/shared/ui/modals/BaseModal'
 import { ModalDictionary } from '@/shared/i18n/types'
 import { useAppDispatch, useAppSelector } from '@/providers/modal-provider/config/hooks'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 
 import { createProductSchema } from '@/shared/schema/createProductSchema'
 import { closeModal, openModal } from '@/providers/modal-provider'
@@ -13,9 +13,10 @@ import { RootState } from '@/providers/store-provider'
 import { CreateProductForm } from '@/widgets/modals/create-product/CreateProductForm'
 import { submitCreateProduct } from '@/widgets/modals/create-product/model/createProduct.submit'
 import { mapProductTypes } from '@/widgets/products/model/mapProductTypes'
-import { ProductType } from '@/entities/product-types/model/productTypeSlice'
+import type { ProductType } from '@/entities/product-types/model/productTypeSlice'
+
 type ProductTypeKey = ProductType['key']
-interface CreateProductModalProps {
+type CreateProductModalProps = {
   onClose: () => void
   dict: ModalDictionary
   orderId: string

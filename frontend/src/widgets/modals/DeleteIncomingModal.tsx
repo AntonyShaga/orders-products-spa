@@ -32,7 +32,15 @@ type DeleteModalProps = (
   subtitle?: number
   imageUrl?: string
 }
-
+/**
+ * Modal for deleting an order or product.
+ *
+ * Supports two modes:
+ * - order deletion
+ * - product deletion within an order
+ *
+ * Uses optimistic update with rollback on failure.
+ */
 const DeleteIncomingModal = ({
   onClose,
   dict,
@@ -46,7 +54,9 @@ const DeleteIncomingModal = ({
   const dispatch = useAppDispatch()
   const orders = useSelector((state: RootState) => state.orders.orders)
 
+  // Performs optimistic deletion with rollback on API failure
   const handleDelete = async () => {
+    // Save previous state for rollback in case API request fails
     const prevOrders = [...orders]
     const isOrder = mode === 'order'
 
@@ -75,6 +85,7 @@ const DeleteIncomingModal = ({
 
       onClose()
     } catch {
+      // Optimistically update UI before server response
       dispatch(setOrders(prevOrders))
 
       eventBus.emit('TOAST_SHOW', {

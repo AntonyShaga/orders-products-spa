@@ -16,10 +16,10 @@ export const selectOrderTotal = (state: RootState, orderId: string) => {
   const order = state.orders.orders.find((o) => o.id === orderId)
   if (!order) return { USD: 0, UAH: 0 }
 
-  return (order.products ?? []).reduce(
+  return (order.items ?? []).reduce(
     (acc, product) => ({
-      USD: acc.USD + getPriceBySymbol(product.price, 'USD'),
-      UAH: acc.UAH + getPriceBySymbol(product.price, 'UAH'),
+      USD: acc.USD + getPriceBySymbol(product.prices, 'USD'),
+      UAH: acc.UAH + getPriceBySymbol(product.prices, 'UAH'),
     }),
     { USD: 0, UAH: 0 },
   )
@@ -28,10 +28,10 @@ export const selectOrderTotal = (state: RootState, orderId: string) => {
 export const selectOrdersWithTotals = createSelector([selectOrders], (orders) => {
   return orders.map((order) => ({
     ...order,
-    total: order.products?.reduce(
+    total: order.items?.reduce(
       (acc, product) => ({
-        USD: acc.USD + getPriceBySymbol(product.price, 'USD'),
-        UAH: acc.UAH + getPriceBySymbol(product.price, 'UAH'),
+        USD: acc.USD + getPriceBySymbol(product.prices, 'USD'),
+        UAH: acc.UAH + getPriceBySymbol(product.prices, 'UAH'),
       }),
       { USD: 0, UAH: 0 },
     ) ?? { USD: 0, UAH: 0 },
