@@ -13,6 +13,12 @@ interface Props {
   onCancel?: () => void
 }
 
+/**
+ * Confirmation modal shown before closing with potential unsaved changes.
+ *
+ * - onConfirm → proceeds with the action (e.g. leave / discard)
+ * - onCancel → optional side effect, then closes modal
+ */
 const ConfirmCloseModal = ({ onClose, dict, onConfirm, onCancel }: Props) => {
   const handleConfirm = () => {
     onConfirm()

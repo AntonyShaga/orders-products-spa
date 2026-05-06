@@ -74,9 +74,9 @@ export const OrderCard = ({
       </div>
 
       <div className="order-card__count">
-        {order.products.length}
+        {order.items.length}
         <span className="order-card__count-label">
-          {getPlural(order.products.length, dictOrderCard.product)}
+          {getPlural(order.items.length, dictOrderCard.product)}
         </span>
       </div>
 

@@ -5,6 +5,7 @@ import { ZodSchema } from 'zod'
 import type { ProductType } from '@/entities/product-types/model/productTypeSlice'
 import { eventBus } from '@/shared/lib/eventBus'
 import { ModalDictionary } from '@/shared'
+import { CreateOrderItemPayload } from '@/entities/order/model/types'
 
 type ProductTypeKey = ProductType['key']
 type Currency = 'USD' | 'UAH'
@@ -38,6 +39,23 @@ type SubmitCreateProductParams = {
   dict: ModalDictionary
 }
 
+/**
+ * Handles product creation form submission.
+ *
+ * Flow:
+ * 1. Prevent default form submit
+ * 2. Validate form data using Zod schema
+ * 3. If invalid → set form errors and exit
+ * 4. If valid → build payload and send API request
+ * 5. On success → update store + show success toast + close modal
+ * 6. On error → show error toast
+ * 7. Always → reset submitting state
+ *
+ * Notes:
+ * - Uses optimistic UX (no blocking before API)
+ * - Converts form values (string | number) to numbers
+ * - Generates guarantee period (now → +5 days)
+ */
 export const submitCreateProduct = async ({
   e,
   state,
@@ -50,6 +68,7 @@ export const submitCreateProduct = async ({
 }: SubmitCreateProductParams) => {
   e.preventDefault()
 
+  // Validate form input
   const result = schema.safeParse({
     title: state.title,
     serialNumber: Number(state.serialNumber) || 0,
@@ -57,6 +76,7 @@ export const submitCreateProduct = async ({
     uah: Number(state.uah) || 0,
   })
 
+  // Handle validation errors
   if (!result.success) {
     const errors = result.error.flatten().fieldErrors
 
@@ -71,10 +91,12 @@ export const submitCreateProduct = async ({
   state.setErrors({})
   state.setIsSubmitting(true)
 
+  // Generate guarantee period (now → +5 days)
   const now = new Date()
   const end = new Date(now)
   end.setDate(end.getDate() + 5)
 
+  // Build API payload
   const payload = {
     orderId,
     title: state.title,
@@ -87,7 +109,7 @@ export const submitCreateProduct = async ({
       start: now.toISOString(),
       end: end.toISOString(),
     },
-    price: [
+    prices: [
       {
         value: result.data.usd,
         symbol: 'USD',
@@ -99,14 +121,16 @@ export const submitCreateProduct = async ({
         isDefault: state.defaultCurrency === 'UAH',
       },
     ],
-  }
+  } satisfies CreateOrderItemPayload
 
   try {
     const res = await createProduct(payload)
 
     if (res.data) {
+      // Update store with new product
       dispatch(addProductToOrder(res.data))
 
+      // Notify user
       eventBus.emit('TOAST_SHOW', {
         message: dict.toast.product.created.replace('{{title}}', res.data.title),
         type: 'success',
@@ -115,6 +139,7 @@ export const submitCreateProduct = async ({
       onClose()
     }
   } catch {
+    // Handle API failure
     eventBus.emit('TOAST_SHOW', {
       message: dict.toast.product.errorCreate,
       type: 'error',

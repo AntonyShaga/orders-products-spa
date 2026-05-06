@@ -6,7 +6,7 @@ export const mockOrders: Order[] = [
     title: 'Order 1',
     date: '2025-01-01T00:00:00.000Z',
     description: 'desc 1',
-    products: [
+    items: [
       {
         id: 'p1',
         serialNumber: 111,
@@ -19,11 +19,11 @@ export const mockOrders: Order[] = [
           start: '2025-01-01T00:00:00.000Z',
           end: '2026-01-01T00:00:00.000Z',
         },
-        price: [
+        prices: [
           { value: 100, symbol: 'USD', isDefault: true },
           { value: 4000, symbol: 'UAH', isDefault: false },
         ],
-        order: '1',
+        orderId: '1',
         date: '2025-01-01T00:00:00.000Z',
       },
       {
@@ -38,11 +38,11 @@ export const mockOrders: Order[] = [
           start: '2025-01-01T00:00:00.000Z',
           end: '2026-01-01T00:00:00.000Z',
         },
-        price: [
+        prices: [
           { value: 200, symbol: 'USD', isDefault: true },
           { value: 8000, symbol: 'UAH', isDefault: false },
         ],
-        order: '1',
+        orderId: '1',
         date: '2025-01-01T00:00:00.000Z',
       },
     ],
@@ -52,7 +52,7 @@ export const mockOrders: Order[] = [
     title: 'Order 2',
     date: '2025-01-02T00:00:00.000Z',
     description: 'desc 2',
-    products: [
+    items: [
       {
         id: 'p3',
         serialNumber: 333,
@@ -65,11 +65,11 @@ export const mockOrders: Order[] = [
           start: '2025-01-02T00:00:00.000Z',
           end: '2026-01-02T00:00:00.000Z',
         },
-        price: [
+        prices: [
           { value: 150, symbol: 'USD', isDefault: true },
           { value: 6000, symbol: 'UAH', isDefault: false },
         ],
-        order: '2',
+        orderId: '2',
         date: '2025-01-02T00:00:00.000Z',
       },
     ],

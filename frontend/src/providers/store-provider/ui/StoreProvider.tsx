@@ -20,10 +20,10 @@ export const StoreProvider = ({
     makeStore({
       modal: [],
       orders: {
-        orders: initialOrders,
+        orders: initialOrders ?? [],
         selectedOrderId: null,
       },
-      productTypes: initialProductTypes,
+      productTypes: initialProductTypes ?? [],
     }),
   )
 

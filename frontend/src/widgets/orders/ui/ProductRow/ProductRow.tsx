@@ -1,6 +1,6 @@
 'use client'
 
-import { Product } from '@/entities/order/model/types'
+import { Price, OrderItem } from '@/entities/order/model/types'
 import './ProductRow.css'
 import { ProductRowDictionary } from '@/shared'
 import { formatDateLong, formatDateShort } from '@/shared/lib/date/formatDate'
@@ -13,7 +13,7 @@ import Image from 'next/image'
 import TrashIcon from '@/shared/assets/icons/trash.svg'
 
 export interface ProductRowProps {
-  product: Product
+  product: OrderItem
   orderTitle: string
   statusDict: ProductRowDictionary
   orderId: string
@@ -82,7 +82,7 @@ export const ProductRow = ({
       </div>
 
       <div className="product-row__price">
-        {product.price?.map((price) => (
+        {product.prices?.map((price: Price) => (
           <div key={price.symbol} className="product-row__price-item">
             <span className="product-row__price-value">{price.value}</span>
             <span className="product-row__price-symbol">{price.symbol}</span>

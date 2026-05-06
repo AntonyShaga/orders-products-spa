@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient'
-import { CreateProductPayload, Order, Product } from '@/entities/order/model/types'
+import { CreateOrderItemPayload, Order, OrderItem } from '@/entities/order/model/types'
 
 export const deleteOrder = (id: string) =>
   apiClient<void>(`/orders/${id}`, {
@@ -12,8 +12,8 @@ export const createOrder = () =>
     method: 'POST',
   })
 
-export const createProduct = (payload: CreateProductPayload) =>
-  apiClient<Product>('/orders/product', {
+export const createProduct = (payload: CreateOrderItemPayload) =>
+  apiClient<OrderItem>('/orders/product', {
     method: 'POST',
     body: JSON.stringify(payload),
   })

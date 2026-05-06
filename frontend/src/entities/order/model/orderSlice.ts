@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Order, Product } from './types'
+import { Order, OrderItem } from './types'
 
 interface OrderState {
   orders: Order[]
@@ -23,13 +23,13 @@ export const orderSlice = createSlice({
       state.orders.unshift(action.payload)
     },
 
-    addProductToOrder: (state, action: PayloadAction<Product>) => {
+    addProductToOrder: (state, action: PayloadAction<OrderItem>) => {
       const product = action.payload
 
-      const order = state.orders.find((o) => o.id === product.order)
+      const order = state.orders.find((o) => o.id === product.orderId)
 
       if (order) {
-        order.products.push(product)
+        order.items.push(product)
       }
     },
 
@@ -55,7 +55,7 @@ export const orderSlice = createSlice({
 
       if (!order) return
 
-      order.products = order.products.filter((p) => p.id !== productId)
+      order.items = order.items.filter((p) => p.id !== productId)
     },
   },
 })

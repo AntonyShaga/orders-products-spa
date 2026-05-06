@@ -26,7 +26,7 @@ export default function OrderDetails({
   dictOrderDetails,
   locale,
 }: OrderDetailsProps) {
-  const { title, products, id } = order
+  const { title, items, id } = order
   const dispatch = useAppDispatch()
   const handleOpenCreateProduct = () => {
     dispatch(
@@ -64,14 +64,14 @@ export default function OrderDetails({
         </div>
 
         <div className="order-details__table" role="table">
-          {products.length === 0 ? (
+          {items.length === 0 ? (
             <div className="order-details__empty">{dictOrderDetails.empty}</div>
           ) : (
-            products.map((product) => (
+            items.map((item) => (
               <ProductRow
-                key={product.id}
+                key={item.id}
                 orderId={id}
-                product={product}
+                product={item}
                 orderTitle={title}
                 statusDict={dictOrderDetails.status}
                 locale={locale}

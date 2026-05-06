@@ -15,7 +15,7 @@ const createMockState = (partial: Partial<RootState> = {}): RootState => ({
 
 describe('order selectors', () => {
   test('getPriceBySymbol returns correct value', () => {
-    const prices = mockOrders[0].products[0].price
+    const prices = mockOrders[0].items[0].prices
 
     expect(getPriceBySymbol(prices, 'USD')).toBe(100)
     expect(getPriceBySymbol(prices, 'UAH')).toBe(4000)
