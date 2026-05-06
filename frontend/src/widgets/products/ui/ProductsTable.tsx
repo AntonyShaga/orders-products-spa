@@ -28,13 +28,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }
     productTypes,
   } = dictProductsTable
 
-  if (isLoading) {
-    return (
-      <div>
-        <Loader />
-      </div>
-    )
-  }
+  const safeProducts = products ?? []
 
   return (
     <div className="products__table table-responsive">
@@ -51,7 +45,15 @@ export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }
         </thead>
 
         <tbody className="products__body">
-          {!isLoading && products.length === 0 && (
+          {isLoading && (
+            <tr>
+              <td colSpan={6}>
+                <Loader />
+              </td>
+            </tr>
+          )}
+
+          {!isLoading && safeProducts.length === 0 && (
             <tr>
               <td colSpan={6} className="text-center text-muted">
                 {empty}
@@ -59,37 +61,40 @@ export const ProductsTable = ({ products, dictProductsTable, locale, isLoading }
             </tr>
           )}
 
-          {products.map((p) => (
-            <tr key={p.id} className="products__row">
-              <td className="products__name text-center">
-                <div>{p.title}</div>
-                <small className="products__muted">{p.serialNumber}</small>
-              </td>
+          {!isLoading &&
+            safeProducts.map((p) => (
+              <tr key={p.id} className="products__row">
+                <td className="products__name text-center">
+                  <div>{p.title}</div>
+                  <small className="products__muted">{p.serialNumber}</small>
+                </td>
 
-              <td className="text-center">{mapProductTypeLabel(p.type, productTypes)}</td>
+                <td className="text-center">{mapProductTypeLabel(p.type, productTypes)}</td>
 
-              <td className="products__guarantee text-center">
-                <div>{formatDateShort(p.guarantee.start, locale)}</div>
-                <small className="products__muted">{formatDateLong(p.guarantee.end, locale)}</small>
-              </td>
+                <td className="products__guarantee text-center">
+                  <div>{formatDateShort(p.guarantee.start, locale)}</div>
+                  <small className="products__muted">
+                    {formatDateLong(p.guarantee.end, locale)}
+                  </small>
+                </td>
 
-              <td className="products__price text-center">
-                {p.prices?.map((price) => (
-                  <div key={price.symbol}>
-                    {price.value} {price.symbol}
-                  </div>
-                ))}
-              </td>
+                <td className="products__price text-center">
+                  {p.prices?.map((price) => (
+                    <div key={price.symbol}>
+                      {price.value} {price.symbol}
+                    </div>
+                  ))}
+                </td>
 
-              <td className="text-center">{`${dictProductsTable.orderLabel}  ${p.orderTitle}`}</td>
+                <td className="text-center">{`${dictProductsTable.orderLabel}  ${p.orderTitle}`}</td>
 
-              <td className="products__status text-center">
-                <span className={`badge ${p.isNew ? 'bg-success' : 'bg-secondary'}`}>
-                  {p.isNew ? statusFree : statusRepair}
-                </span>
-              </td>
-            </tr>
-          ))}
+                <td className="products__status text-center">
+                  <span className={`badge ${p.isNew ? 'bg-success' : 'bg-secondary'}`}>
+                    {p.isNew ? statusFree : statusRepair}
+                  </span>
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
