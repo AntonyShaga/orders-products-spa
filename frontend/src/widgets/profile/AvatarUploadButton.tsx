@@ -1,22 +1,28 @@
 'use client'
 
-import { uploadAvatar } from '@/shared/api/upload/uploadAvatar'
-import { updateAvatar } from '@/shared/api/graphql/mutations/updateAvatar'
 import React from 'react'
 
-export function AvatarUploadButton() {
+import { uploadAvatar } from '@/shared/api/upload/uploadAvatar'
+
+import { updateAvatar } from '@/shared/api/graphql/mutations/updateAvatar'
+
+type Props = {
+  onUploaded: (url: string) => void
+}
+
+export function AvatarUploadButton({ onUploaded }: Props) {
   async function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
 
-    if (!file) return
+    if (!file) {
+      return
+    }
 
-    // upload image
     const upload = await uploadAvatar(file)
 
-    // save url to postgres
     await updateAvatar(upload.url)
 
-    window.location.reload()
+    onUploaded(upload.url)
   }
 
   return (
