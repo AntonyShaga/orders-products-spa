@@ -32,6 +32,19 @@
 .loader--fade-content {
     animation: loader-fade-content 0.3s ease;
 }
+.loader--inline {
+    position: static;
+
+    width: 100%;
+    min-height: 240px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    backdrop-filter: none;
+}
 
 @keyframes loader-spin {
     to {
