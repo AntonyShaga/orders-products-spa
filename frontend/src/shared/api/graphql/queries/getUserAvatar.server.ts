@@ -24,9 +24,7 @@ export async function getUserAvatarServer() {
         `,
     }),
 
-    next: {
-      revalidate: 60,
-    },
+    cache: 'no-store',
   })
 
   if (!res.ok) {
