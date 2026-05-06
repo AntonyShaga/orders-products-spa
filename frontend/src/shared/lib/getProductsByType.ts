@@ -1,11 +1,19 @@
-import { Product } from '@/entities/order/model/types'
+import { OrderItem } from '@/entities/order/model/types'
 
 type ChartItem = {
   type: string
   count: number
 }
-
-export const getProductsByType = (products: Product[]): ChartItem[] => {
+/**
+ * Aggregates products by type and returns data for charts.
+ *
+ * - Groups products by `type`
+ * - Counts how many products belong to each type
+ * - Fallback to "Unknown" if type is missing
+ *
+ * Used for building chart datasets (e.g. Recharts).
+ */
+export const getProductsByType = (products: OrderItem[]): ChartItem[] => {
   const map: Record<string, number> = {}
 
   for (const p of products) {

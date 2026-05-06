@@ -47,5 +47,6 @@
 .chart-wrapper {
     width: 240px;
     height: 120px;
+    min-width: 240px;
 }
 

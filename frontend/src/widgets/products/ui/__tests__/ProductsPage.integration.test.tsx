@@ -1,24 +1,47 @@
-import { render, screen, fireEvent } from '@testing-library/react'
+import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { Provider } from 'react-redux'
 import { configureStore } from '@reduxjs/toolkit'
-
 import { ProductsPage } from '../ProductsPage'
-
 import { orderReducer } from '@/entities/order/model/orderSlice'
 import productTypesReducer from '@/entities/product-types/model/productTypesSlice'
 import type { ProductsDictionary } from '@/shared'
+import type { Order } from '@/entities/order/model/types'
+import { filterProducts, mapOrdersToProducts } from '@/widgets/products/model/utils'
+
+jest.mock('@/widgets/products/model/workerUrl', () => ({
+  createProductsWorker: () => {
+    const worker = {
+      onmessage: null as ((event: MessageEvent) => void) | null,
+
+      postMessage(message: { orders: Order[]; selectedType: string | null }) {
+        const products = mapOrdersToProducts(message.orders)
+        const filtered = filterProducts(products, message.selectedType)
+
+        setTimeout(() => {
+          worker.onmessage?.({ data: filtered } as MessageEvent)
+        }, 0)
+      },
+
+      terminate() {},
+    }
+
+    return worker
+  },
+}))
 
 jest.mock('@/widgets/charts/ProductsBarChart', () => ({
   ProductsBarChart: () => <div data-testid="chart" />,
 }))
 
-const mockOrders = [
+const now = new Date().toISOString()
+
+const mockOrders: Order[] = [
   {
     id: '1',
     title: 'Order 1',
-    date: new Date().toISOString(),
+    date: now,
     description: 'test order',
-    products: [
+    items: [
       {
         id: 'p1',
         title: 'iPhone',
@@ -27,34 +50,28 @@ const mockOrders = [
         isNew: true,
         photo: '',
         specification: 'test',
-        order: '1',
-        date: new Date().toISOString(),
-
-        guarantee: {
-          start: new Date().toISOString(),
-          end: new Date().toISOString(),
-        },
-        price: [{ value: 1000, symbol: 'USD', isDefault: true }],
+        orderId: '1',
+        date: now,
+        guarantee: { start: now, end: now },
+        prices: [{ value: 1000, symbol: 'USD', isDefault: true }],
       },
       {
         id: 'p2',
         title: 'MacBook',
         type: 'laptop',
         serialNumber: 456,
+        isNew: false,
         photo: '',
         specification: 'test',
-        order: '1', //
-        date: new Date().toISOString(),
-        isNew: false,
-        guarantee: {
-          start: new Date().toISOString(),
-          end: new Date().toISOString(),
-        },
-        price: [{ value: 2000, symbol: 'USD', isDefault: true }],
+        orderId: '1',
+        date: now,
+        guarantee: { start: now, end: now },
+        prices: [{ value: 2000, symbol: 'USD', isDefault: true }],
       },
     ],
   },
 ]
+
 const createStore = () =>
   configureStore({
     reducer: {
@@ -62,10 +79,7 @@ const createStore = () =>
       productTypes: productTypesReducer,
     },
     preloadedState: {
-      orders: {
-        orders: mockOrders,
-        selectedOrderId: null,
-      },
+      orders: { orders: mockOrders, selectedOrderId: null },
       productTypes: [
         { key: 'phone' as const, icon: '' },
         { key: 'laptop' as const, icon: '' },
@@ -73,15 +87,12 @@ const createStore = () =>
     },
   })
 
-const dict = {
+const dict: ProductsDictionary = {
   page: { title: 'Products' },
   toolbar: {
     filterAll: 'All',
     chartTitle: 'Chart',
-    productTypes: {
-      phone: 'Phone',
-      laptop: 'Laptop',
-    },
+    productTypes: { phone: 'Phone', laptop: 'Laptop', monitor: 'Monitor' },
   },
   table: {
     name: 'Name',
@@ -93,10 +104,7 @@ const dict = {
     empty: 'Empty',
     statusRepair: 'Repair',
     statusFree: 'Free',
-    productTypes: {
-      phone: 'Phone',
-      laptop: 'Laptop',
-    },
+    productTypes: { phone: 'Phone', laptop: 'Laptop', monitor: 'Monitor' },
   },
 }
 
@@ -106,17 +114,21 @@ describe('ProductsPage integration', () => {
 
     render(
       <Provider store={store}>
-        <ProductsPage locale="en" dict={dict as ProductsDictionary} />
+        <ProductsPage locale="en" dict={dict} />
       </Provider>,
     )
 
     expect(await screen.findByText('iPhone')).toBeInTheDocument()
     expect(screen.getByText('MacBook')).toBeInTheDocument()
 
-    const select = screen.getByRole('combobox')
-    fireEvent.change(select, { target: { value: 'phone' } })
+    fireEvent.change(screen.getByRole('combobox'), {
+      target: { value: 'phone' },
+    })
 
-    expect(await screen.findByText('iPhone')).toBeInTheDocument()
-    expect(screen.queryByText('MacBook')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByText('MacBook')).not.toBeInTheDocument()
+    })
+
+    expect(screen.getByText('iPhone')).toBeInTheDocument()
   })
 })

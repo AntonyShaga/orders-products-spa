@@ -63,7 +63,7 @@ export const ProductsTable = ({ products, dictProductsTable, locale }: Props) =>
               </td>
 
               <td className="products__price text-center">
-                {p.price?.map((price) => (
+                {p.prices?.map((price) => (
                   <div key={price.symbol}>
                     {price.value} {price.symbol}
                   </div>
