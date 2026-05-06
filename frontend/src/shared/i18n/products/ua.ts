@@ -23,6 +23,7 @@ const products: ProductsDictionary = {
     empty: 'Немає товарів',
     statusFree: 'Вільний',
     statusRepair: 'В ремонті',
+    loading: 'Завантаження',
     productTypes: {
       phone: 'Телефон',
       laptop: 'Ноутбук',

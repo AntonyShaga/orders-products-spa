@@ -58,6 +58,7 @@ export interface ProductsTableDictionary extends CommonDictionary {
   empty: string
   statusFree: string
   statusRepair: string
+  loading: string
   productTypes: {
     phone: string
     laptop: string

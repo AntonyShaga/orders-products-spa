@@ -23,6 +23,7 @@ const products: ProductsDictionary = {
     empty: 'No products',
     statusFree: 'Free',
     statusRepair: 'In repair',
+    loading: 'Loading',
     productTypes: {
       phone: 'Phone',
       laptop: 'Laptop',

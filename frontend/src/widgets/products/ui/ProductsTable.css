@@ -79,3 +79,56 @@
 .products__body {
     background: var(--color-bg);
 }
+
+.products__loading {
+    height: 240px;
+    vertical-align: middle;
+}
+
+.products__loading-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    font-size: 14px;
+    color: var(--color-accent);
+}
+
+.products__dots {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.products__dots span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: var(--color-accent);
+
+    animation: products-loading-bounce 1s infinite ease-in-out;
+}
+
+.products__dots span:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.products__dots span:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes products-loading-bounce {
+    0%,
+    80%,
+    100% {
+        transform: translateY(0);
+        opacity: 0.4;
+    }
+
+    40% {
+        transform: translateY(-6px);
+        opacity: 1;
+    }
+}
