@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsDateString,
   IsNumber,
   IsString,
   ValidateNested,
@@ -8,10 +9,10 @@ import {
 import { Type } from 'class-transformer';
 
 class GuaranteeDto {
-  @IsString()
+  @IsDateString()
   start: string;
 
-  @IsString()
+  @IsDateString()
   end: string;
 }
 
@@ -26,7 +27,7 @@ class PriceDto {
   isDefault: boolean;
 }
 
-export class CreateProductDto {
+export class CreateOrderItemDto {
   @IsString()
   orderId: string;
 
@@ -55,5 +56,5 @@ export class CreateProductDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PriceDto)
-  price: PriceDto[];
+  prices: PriceDto[];
 }
