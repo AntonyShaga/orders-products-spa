@@ -3,7 +3,8 @@ import { Response } from 'express';
 const baseCookieOptions = {
   httpOnly: true,
   sameSite: 'lax' as const,
-  secure: process.env.NODE_ENV === 'production',
+  secure:
+    process.env.NODE_ENV === 'production' && process.env.PROTOCOL === 'https',
 };
 
 export function setAuthCookies(
@@ -13,12 +14,12 @@ export function setAuthCookies(
 ) {
   res.cookie('accessToken', accessToken, {
     ...baseCookieOptions,
-    maxAge: 1000 * 60 * 15,
+    maxAge: Number(process.env.COOKIE_ACCESS_MAXAGE) || 900000,
   });
 
   res.cookie('refreshToken', refreshToken, {
     ...baseCookieOptions,
-    maxAge: 1000 * 60 * 60 * 24 * 7,
+    maxAge: Number(process.env.COOKIE_REFRESH_MAXAGE) || 604800000,
   });
 }
 

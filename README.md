@@ -29,12 +29,15 @@ The project demonstrates:
 * create & delete products
 * guarantee period display
 
-### Authentication
+### Authentication & Security (Advanced Flow)
 
-* login / register
-* JWT (HttpOnly cookies)
-* refresh token flow
-* protected routes
+* **Dual Token Strategy**: Separate secrets for Access (short-lived) and Refresh (long-lived) tokens.
+* **Refresh Token Rotation**: Each refresh cycle invalidates the old token and issues a new one, preventing replay attacks.
+* **Database-backed Sessions**: Refresh tokens are stored in PostgreSQL with a session limit (max 5 active devices per user).
+* **Hybrid Validation**:
+    * **Middleware (SSR)**: Token verification on the edge for instant redirects.
+    * **Client Interceptor**: Recursive `apiClient` logic to handle 401 errors seamlessly.
+* **Security**: All tokens are stored in `HttpOnly, Secure, SameSite=Lax` cookies.
 
 ### Real-time
 
@@ -74,6 +77,7 @@ The project demonstrates:
 * Redux Toolkit
 * Recharts (charts)
 * Socket.io-client
+* **Jose** (Lightweight JWT verification in Edge Runtime)
 
 ### Backend
 
@@ -93,6 +97,10 @@ The application is containerized using Docker Compose and includes:
 - NestJS backend
 - Next.js frontend
 - Nginx reverse proxy
+
+* **Docker Health Checks**: Configured service dependencies (Frontend waits for Backend, Backend waits for DB).
+* **Nginx Reverse Proxy**: Single entry point with automatic reconnection for WebSockets.
+* **Resilient Connection**: Backend includes logic to reconnect to Prisma/PostgreSQL on transient network failures.
 
 Nginx is used to route HTTP requests and handle WebSocket connections.
 Uploaded avatars are stored in a persistent Docker volume and survive container rebuilds.
@@ -160,9 +168,9 @@ Without this data, certain UI features (such as product type selection) will not
 ---
 
 ## Run with Docker
-
+>The project uses a specific env-file for orchestration. Run this command from the root directory:
 ```bash
-docker-compose up --build
+docker compose --env-file .env.compose up -d --build
 ```
 
 After start:
@@ -194,26 +202,41 @@ npm run dev
 
 ## Environment Variables
 
-> ⚠️ JWT_SECRET must be identical in both frontend and backend.
-> It is used to sign tokens on the backend and verify them in Next.js middleware.
+> ⚠️ Important: Secrets must match between services for signature verification.
 
 ### frontend/.env
-
-```
-NEXT_PUBLIC_API_URL=http://localhost:3000
+```bash
+NEXT_PUBLIC_API_URL=http://localhost/api
 INTERNAL_API_URL=http://backend:3000
-JWT_SECRET=secret
+# Secrets for SSR middleware verification
+JWT_ACCESS_SECRET=your_access_secret_here
+JWT_REFRESH_SECRET=your_refresh_secret_here
 ```
-
 ### backend/.env
 
-```
+```bash
 PORT=3000
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nexus?connect_timeout=5&pool_timeout=5
-JWT_SECRET=secret
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nexus
+JWT_ACCESS_SECRET=your_access_secret_here
+JWT_REFRESH_SECRET=your_refresh_secret_here
+JWT_ACCESS_EXPIRES_IN=15m
+JWT_REFRESH_EXPIRES_IN=7d
+COOKIE_REFRESH_MAXAGE=604800000
 CORS_ORIGIN=http://localhost:3001
 ```
 
+> ⚠️ This file configures the Docker orchestration itself.
+
+* **PROJECT_NAME**: Sets the prefix for containers and networks (default: `nexus-stock`).
+* **EXTERNAL_PORT**: The port on which the application will be available via Nginx (default: `80`).
+* **NODE_VERSION / POSTGRES_VERSION**: Controlled versions of base images to ensure environment parity.
+
+```bash
+PROJECT_NAME=nexus-stock
+EXTERNAL_PORT=80
+NODE_VERSION=22-alpine
+POSTGRES_VERSION=15-alpine
+```
 ---
 
 ## Project Structure
@@ -237,6 +260,7 @@ backend/
         ├── orders/
         ├── prisma/
         ├── product-types/
+        ├── shared/
         ├── user/
         ├── websoceket/
 ```
@@ -263,7 +287,7 @@ Location: `/db/schema.mwb`
 Project supports full clean run:
 
 ```bash
-docker-compose up --build
+docker compose --env-file .env.compose up -d --build
 ```
 
 Tested features:
@@ -296,3 +320,7 @@ This project intentionally goes beyond the basic requirements and demonstrates *
 * token refresh flow
 * modular frontend design
 * real-time features
+
+**Why Fetch over Axios?** Built-in support for Next.js caching and better compatibility with Edge Runtime (Middleware).
+**Why Database for Refresh Tokens?** To allow instant session revocation and limit concurrent logins.
+**Why Nginx?** To handle path-based routing (`/api` -> backend, `/` -> frontend) and provide a single entry point for WebSockets.

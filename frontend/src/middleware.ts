@@ -5,15 +5,14 @@ import { locales, defaultLocale, type Locale } from '@/shared/i18n/config'
 function getLocale(req: NextRequest): Locale {
   const accept = req.headers.get('accept-language')
   if (!accept) return defaultLocale
-
   const match = accept.split(',')[0].split('-')[0] as Locale
   return locales.includes(match) ? match : defaultLocale
 }
 
-async function verifyToken(token?: string) {
-  if (!token) return false
+async function verifyToken(token: string | undefined, secretStr: string | undefined) {
+  if (!token || !secretStr) return false
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!)
+    const secret = new TextEncoder().encode(secretStr)
     await jwtVerify(token, secret)
     return true
   } catch {
@@ -25,7 +24,6 @@ export async function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl
 
   const hasLocale = locales.some((l) => pathname === `/${l}` || pathname.startsWith(`/${l}/`))
-
   if (!hasLocale) {
     const locale = getLocale(req)
     return NextResponse.redirect(new URL(`/${locale}${pathname}${search}`, req.url))
@@ -42,24 +40,25 @@ export async function middleware(req: NextRequest) {
   const accessToken = req.cookies.get('accessToken')?.value
   const refreshToken = req.cookies.get('refreshToken')?.value
 
-  let isValidAccess = await verifyToken(accessToken)
+  let isValidAccess = await verifyToken(accessToken, process.env.JWT_ACCESS_SECRET)
 
   if (!isValidAccess && refreshToken) {
     try {
-      const refreshRes = await fetch(`${process.env.INTERNAL_API_URL}/auth/refresh`, {
-        method: 'POST',
-        headers: {
-          Cookie: `refreshToken=${refreshToken}`,
-        },
-      })
+      const isValidRefresh = await verifyToken(refreshToken, process.env.JWT_REFRESH_SECRET)
 
-      if (refreshRes.ok) {
-        const setCookie = refreshRes.headers.get('set-cookie')
+      if (isValidRefresh) {
+        const refreshRes = await fetch(`${process.env.INTERNAL_API_URL}/auth/refresh`, {
+          method: 'POST',
+          headers: { Cookie: `refreshToken=${refreshToken}` },
+        })
 
-        if (setCookie) {
-          const res = NextResponse.redirect(req.url)
-          res.headers.set('set-cookie', setCookie)
-          return res
+        if (refreshRes.ok) {
+          const setCookie = refreshRes.headers.get('set-cookie')
+          if (setCookie) {
+            const res = NextResponse.redirect(req.url)
+            res.headers.set('set-cookie', setCookie)
+            return res
+          }
         }
       }
     } catch {}

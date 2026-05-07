@@ -3,7 +3,10 @@ node_modules
 dist
 build
 coverage
+backend/public/avatars/*
+!backend/public/avatars/.gitkeep
 .env
 .env.local
+.env.compose
 .DS_Store
 .idea/

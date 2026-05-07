@@ -35,8 +35,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
-          script: |
-            rm -rf ~/temp-deploy
+          script: rm -rf ~/temp-deploy
 
       - name: Copy project to server
         uses: appleboy/scp-action@v0.1.7
@@ -57,35 +56,30 @@ jobs:
             if [ "${{ github.ref_name }}" = "staging" ]; then
               APP_DIR=~/orders-products-staging
               PROJECT_NAME=staging
-              PORT=81
+              EXTERNAL_PORT=81
               BACK_ENV="${{ secrets.BACKEND_ENV_STAGING }}"
               FRONT_ENV="${{ secrets.FRONTEND_ENV_STAGING }}"
-              DB_PORT=5433
-              BACK_PORT=3001
             else
               APP_DIR=~/orders-products-spa
               PROJECT_NAME=prod
-              PORT=80
+              EXTERNAL_PORT=80
               BACK_ENV="${{ secrets.BACKEND_ENV_PROD }}"
               FRONT_ENV="${{ secrets.FRONTEND_ENV_PROD }}"
-              DB_PORT=5432
-              BACK_PORT=3000
             fi
             
             mkdir -p $APP_DIR
-
             rsync -av --delete ~/temp-deploy/ $APP_DIR/
-
             cd $APP_DIR
-            
+
             echo "$BACK_ENV" > backend/.env
             echo "$FRONT_ENV" > frontend/.env
+            
+            echo "PROJECT_NAME=$PROJECT_NAME" > .env
+            echo "EXTERNAL_PORT=$EXTERNAL_PORT" >> .env
+            echo "NODE_VERSION=22-alpine" >> .env
+            echo "POSTGRES_VERSION=15-alpine" >> .env
 
-            echo "DB_PORT=$DB_PORT" > .env
-            echo "BACK_PORT=$BACK_PORT" >> .env
+            docker compose -p $PROJECT_NAME down --remove-orphans || true
+            docker compose -p $PROJECT_NAME up -d --build
 
-            sed -i "s/80:80/${PORT}:80/g" docker-compose.yml
-
-            docker-compose -p $PROJECT_NAME down --remove-orphans || true
-
-            docker-compose -p $PROJECT_NAME up -d --build
+            docker image prune -f

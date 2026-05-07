@@ -1,4 +1,10 @@
-FROM node:20-alpine
+ARG NODE_VERSION=22-alpine
+
+FROM node:${NODE_VERSION}
+
+ARG NODE_VERSION
+
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
@@ -7,7 +13,9 @@ RUN npm install
 
 COPY . .
 
-RUN npx prisma generate && npm run build
+RUN npx prisma generate
+
+RUN npm run build
 
 EXPOSE 3000
 
