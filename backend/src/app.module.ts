@@ -12,6 +12,7 @@ import { UserModule } from './user/user.module';
 
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -41,7 +42,7 @@ import { join } from 'path';
     ProductTypesModule,
   ],
 
-  controllers: [],
+  controllers: [HealthController],
 
   providers: [WebsocketGateway],
 })
