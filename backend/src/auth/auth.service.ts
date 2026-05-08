@@ -123,10 +123,6 @@ export class AuthService {
       });
       if (!user) throw new UnauthorizedException('User no longer exists');
 
-      await this.prisma.refreshToken.delete({
-        where: { id: tokenData.id },
-      });
-
       const newTokens = await this.generateTokens(user.id, user.email);
 
       await this.saveRefreshToken(
@@ -134,6 +130,10 @@ export class AuthService {
         newTokens.refreshToken,
         newTokens.tokenId,
       );
+
+      await this.prisma.refreshToken.deleteMany({
+        where: { id: tokenData.id },
+      });
 
       return {
         accessToken: newTokens.accessToken,
@@ -183,6 +183,7 @@ export class AuthService {
       return;
     }
   }
+
   private async saveRefreshToken(
     userId: string,
     refreshToken: string,

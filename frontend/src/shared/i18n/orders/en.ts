@@ -5,6 +5,7 @@ const orders: OrdersDictionary = {
     title: 'Orders',
     addOrder: 'Add order',
     empty: 'No orders',
+    loading: 'Loading',
   },
   orderCard: {
     orderLabel: 'Order',

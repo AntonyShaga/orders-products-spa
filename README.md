@@ -37,7 +37,7 @@ The project demonstrates:
 * **Hybrid Validation**:
     * **Middleware (SSR)**: Token verification on the edge for instant redirects.
     * **Client Interceptor**: Recursive `apiClient` logic to handle 401 errors seamlessly.
-* **Security**: All tokens are stored in `HttpOnly, Secure, SameSite=Lax` cookies.
+* **Security**: Tokens are stored in `HttpOnly` cookies with `SameSite=Lax`. `Secure` cookies are used in HTTPS environments.
 
 ### Real-time
 
@@ -52,6 +52,15 @@ The project demonstrates:
 * animations between routes
 * toast notification system (queue, animations, pause on hover)
 * user avatar upload with persistent storage
+
+---
+
+## Responsive Support
+
+The application is optimized for desktop usage.
+Mobile responsiveness was not a primary requirement for this test task, so the UI is focused on desktop and tablet layouts where order and product management workflows are easier to use.
+Core functionality remains available, but the best experience is expected on desktop screens.
+
 ---
 
 ## Architecture Highlights
@@ -103,7 +112,7 @@ The application is containerized using Docker Compose and includes:
 * **Resilient Connection**: Backend includes logic to reconnect to Prisma/PostgreSQL on transient network failures.
 
 Nginx is used to route HTTP requests and handle WebSocket connections.
-Uploaded avatars are stored in a persistent Docker volume and survive container rebuilds.
+Uploaded avatars are stored in a bind-mounted directory (`backend/public/avatars`) and survive container rebuilds.
 
 ## Deployment
 
@@ -168,19 +177,45 @@ Without this data, certain UI features (such as product type selection) will not
 ---
 
 ## Run with Docker
->The project uses a specific env-file for orchestration. Run this command from the root directory:
+
+The project uses Docker Compose and a separate `.env.compose` file for orchestration.
+
+Run from the root directory:
+
 ```bash
 docker compose --env-file .env.compose up -d --build
 ```
+> Requires Docker Compose V2 (`docker compose`). The legacy `docker-compose` V1 is not supported.
 
-After start:
+After start, the application is available through Nginx:
 
-* Frontend: http://localhost:3001
-* Backend: http://localhost:3000
+```text
+http://localhost
+```
+
+If `.env.compose` uses a custom external port:
+
+```env
+EXTERNAL_PORT=3001
+```
+
+then open:
+
+```text
+http://localhost:3001
+```
+
+The backend is not exposed directly. API requests are routed through Nginx:
+
+```text
+/api
+```
 
 ---
 
-##  Local Setup
+## Local Setup
+
+Use this mode when running the backend and frontend manually without Docker.
 
 ### Backend
 
@@ -188,6 +223,12 @@ After start:
 cd backend
 npm install
 npm run start:dev
+```
+
+Backend runs on:
+
+```text
+http://localhost:3000
 ```
 
 ### Frontend
@@ -198,6 +239,19 @@ npm install
 npm run dev
 ```
 
+Frontend runs on:
+
+```text
+http://localhost:3001
+```
+
+For local development without Docker, frontend environment variables should point directly to the backend:
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:3000
+INTERNAL_API_URL=http://localhost:3000
+```
+
 ---
 
 ## Environment Variables
@@ -205,7 +259,7 @@ npm run dev
 > ⚠️ Important: Secrets must match between services for signature verification.
 
 ### frontend/.env
-```bash
+```env
 NEXT_PUBLIC_API_URL=http://localhost/api
 INTERNAL_API_URL=http://backend:3000
 # Secrets for SSR middleware verification
@@ -214,16 +268,26 @@ JWT_REFRESH_SECRET=your_refresh_secret_here
 ```
 ### backend/.env
 
-```bash
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=nexus
+
 PORT=3000
 DATABASE_URL=postgresql://postgres:postgres@postgres:5432/nexus
+
 JWT_ACCESS_SECRET=your_access_secret_here
 JWT_REFRESH_SECRET=your_refresh_secret_here
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
+
+COOKIE_ACCESS_MAXAGE=900000
 COOKIE_REFRESH_MAXAGE=604800000
-CORS_ORIGIN=http://localhost:3001
+
+CORS_ORIGIN=http://localhost
 ```
+
+### .env.compose
 
 > ⚠️ This file configures the Docker orchestration itself.
 
@@ -231,7 +295,7 @@ CORS_ORIGIN=http://localhost:3001
 * **EXTERNAL_PORT**: The port on which the application will be available via Nginx (default: `80`).
 * **NODE_VERSION / POSTGRES_VERSION**: Controlled versions of base images to ensure environment parity.
 
-```bash
+```env
 PROJECT_NAME=nexus-stock
 EXTERNAL_PORT=80
 NODE_VERSION=22-alpine
@@ -262,7 +326,7 @@ backend/
         ├── product-types/
         ├── shared/
         ├── user/
-        ├── websoceket/
+        ├── websocket/
 ```
 
 ---
@@ -289,6 +353,7 @@ Project supports full clean run:
 ```bash
 docker compose --env-file .env.compose up -d --build
 ```
+> Requires Docker Compose V2 (`docker compose`). The legacy `docker-compose` V1 is not supported.
 
 Tested features:
 
@@ -321,6 +386,11 @@ This project intentionally goes beyond the basic requirements and demonstrates *
 * modular frontend design
 * real-time features
 
-**Why Fetch over Axios?** Built-in support for Next.js caching and better compatibility with Edge Runtime (Middleware).
-**Why Database for Refresh Tokens?** To allow instant session revocation and limit concurrent logins.
-**Why Nginx?** To handle path-based routing (`/api` -> backend, `/` -> frontend) and provide a single entry point for WebSockets.
+**Why Fetch over Axios?**  
+Built-in support for Next.js caching and better compatibility with Edge Runtime middleware.
+
+**Why Database for Refresh Tokens?**  
+To allow instant session revocation, refresh token rotation, and a limit on concurrent sessions.
+
+**Why Nginx?**  
+To handle path-based routing (`/api` -> backend, `/` -> frontend) and provide a single entry point for WebSockets.

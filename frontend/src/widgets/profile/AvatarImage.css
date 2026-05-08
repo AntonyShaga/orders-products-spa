@@ -1,0 +1,81 @@
+.avatar-image {
+    position: relative;
+    width: 80px;
+    height: 80px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    overflow: hidden;
+
+    background: var(--color-surface);
+}
+
+.avatar-image__img {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    border-radius: 50%;
+
+    object-fit: cover;
+    object-position: center;
+
+    opacity: 0;
+    transform: scale(0.96);
+
+    transition:
+            opacity 0.25s ease,
+            transform 0.25s ease;
+}
+
+.avatar-image__img--visible {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.avatar-image__loader {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+
+    display: grid;
+    place-items: center;
+
+    background: rgba(255, 255, 255, 0.65);
+    backdrop-filter: blur(2px);
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 0.25s ease;
+}
+
+.avatar-image__loader--visible {
+    opacity: 1;
+}
+
+:root[data-theme='dark'] .avatar-image__loader {
+    background: rgba(42, 42, 42, 0.7);
+}
+
+.avatar-image__spinner {
+    width: 26px;
+    height: 26px;
+
+    border: 3px solid rgba(139, 195, 74, 0.25);
+    border-top-color: var(--color-accent);
+    border-radius: 50%;
+
+    animation: avatar-image-spin 0.75s linear infinite;
+}
+
+@keyframes avatar-image-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

@@ -6,6 +6,7 @@ import { MODAL_COMPONENTS } from '@/providers/modal-provider/config/ModalRegistr
 import React, { Suspense } from 'react'
 import { closeModal } from '@/providers/modal-provider'
 import { RootState } from '@/providers/store-provider'
+import { Loader } from '@/shared/ui/loader/Loader'
 
 export const ModalProvider = ({ dict }: { dict: ModalDictionary }) => {
   const dispatch = useAppDispatch()
@@ -23,7 +24,7 @@ export const ModalProvider = ({ dict }: { dict: ModalDictionary }) => {
         if (!ModalComponent) return null
 
         return (
-          <Suspense key={index} fallback={null}>
+          <Suspense key={index} fallback={<Loader className="loader--modal" />}>
             <ModalComponent {...modal.props} dict={dict} onClose={() => dispatch(closeModal())} />
           </Suspense>
         )

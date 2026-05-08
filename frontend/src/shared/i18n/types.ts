@@ -5,6 +5,7 @@ export interface CommonDictionary {
 }
 
 export interface OrdersPageDictionary {
+  loading: string
   title: string
   addOrder: string
   empty: string

@@ -45,7 +45,7 @@ describe('modalSlice (stack)', () => {
       openModal({
         type: ModalType.CONFIRM_CLOSE,
         props: {
-          onConfirm: jest.fn(), // 👈 ВАЖНО: правильный payload
+          onConfirm: jest.fn(),
         },
       }),
     )

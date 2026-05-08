@@ -6,8 +6,8 @@
     align-items: center;
     justify-content: center;
 
-    backdrop-filter: blur(6px);
     background: var(--bg);
+    backdrop-filter: blur(6px);
 
     animation: loader-fade-in 0.2s ease;
     z-index: 10;
@@ -18,32 +18,66 @@
     height: 64px;
 
     border: 5px solid rgba(0, 0, 0, 0.1);
-    border-top: 5px solid var(--color-accent);
+    border-top-color: var(--color-accent);
 
     border-radius: 50%;
     animation: loader-spin 0.9s linear infinite;
 }
 
 :root[data-theme='dark'] .loader__spinner {
-    border: 5px solid rgba(255, 255, 255, 0.1);
-    border-top: 5px solid var(--color-accent);
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: var(--color-accent);
 }
 
-.loader--fade-content {
-    animation: loader-fade-content 0.3s ease;
-}
 .loader--inline {
     position: static;
 
     width: 100%;
     min-height: 240px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
     background: transparent;
     backdrop-filter: none;
+}
+
+.loader--modal {
+    position: fixed;
+    inset: 0;
+
+    z-index: 1000;
+
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+}
+
+.loader--modal::before {
+    content: '';
+
+    position: absolute;
+
+    width: 120px;
+    height: 120px;
+
+    border: 1px solid var(--color-border);
+    border-radius: 18px;
+
+    background: var(--color-surface);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+
+    animation: loader-card-in 0.22s ease;
+}
+
+.loader--modal .loader__spinner {
+    position: relative;
+    z-index: 1;
+
+    width: 44px;
+    height: 44px;
+
+    border-width: 4px;
+}
+
+.loader--fade-content {
+    animation: loader-fade-content 0.3s ease;
 }
 
 @keyframes loader-spin {
@@ -56,8 +90,21 @@
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
+    }
+}
+
+@keyframes loader-card-in {
+    from {
+        opacity: 0;
+        transform: scale(0.96) translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -66,6 +113,7 @@
         opacity: 0;
         transform: translateY(6px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
