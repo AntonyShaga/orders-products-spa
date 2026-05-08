@@ -5,6 +5,7 @@ const orders: OrdersDictionary = {
     title: 'Замовлення',
     addOrder: 'Додати замовлення',
     empty: 'Немає замовлень',
+    loading: 'Завантаження',
   },
   orderCard: {
     orderLabel: 'Замовлення',

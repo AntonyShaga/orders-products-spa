@@ -20,9 +20,10 @@ import { eventBus } from '@/shared/lib/eventBus'
 type OrdersPageState = {
   dict: OrdersDictionary
   locale: string
+  isLoading?: boolean
 }
 
-export const OrderList = ({ locale, dict }: OrdersPageState) => {
+export const OrderList = ({ locale, dict, isLoading = false }: OrdersPageState) => {
   const dispatch = useAppDispatch()
 
   const ordersWithTotals = useSelector(selectOrdersWithTotals)
@@ -33,6 +34,8 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
   const [isClosing, setIsClosing] = useState(false)
   const [pendingPage, setPendingPage] = useState<number | null>(null)
   const isOpen = Boolean(selectedOrder)
+
+  const { page, setPage, total, pageSize, paginatedData } = usePagination(ordersWithTotals, 5)
 
   const handleClose = () => {
     setIsClosing(true)
@@ -51,8 +54,6 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
       }
     }
   }
-
-  const { page, setPage, total, pageSize, paginatedData } = usePagination(ordersWithTotals, 5)
 
   const handlePageChange = (nextPage: number) => {
     if (isOpen) {
@@ -83,6 +84,7 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
       })
     }
   }
+
   return (
     <section className="order-list__section">
       <div className="order-list__header">
@@ -94,45 +96,71 @@ export const OrderList = ({ locale, dict }: OrdersPageState) => {
         </div>
       </div>
 
-      <div className={`order-list ${isOpen ? 'order-list--open' : ''}`}>
-        {paginatedData.length === 0 && <div className="order-list__empty">{dict.page.empty}</div>}
+      {isLoading ? (
+        <div className="order-list__loading">
+          <div className="order-list__loading-content">
+            <span>{dict.page.loading ?? 'Loading'}</span>
 
-        <div className="order-list__items">
-          {paginatedData.map((order) => (
-            <OrderCard
-              key={order.id}
-              order={order}
-              dictOrderCard={dict.orderCard}
-              locale={locale}
-              isSelected={selectedOrderId === order.id}
-              isCompact={isOpen}
-              total={order.total}
-              onBack={handleClose}
-              onSelect={() => dispatch(setSelectedOrder(order.id))}
-            />
-          ))}
-        </div>
-
-        <div
-          className={`order-list__details ${isOpen && !isClosing ? 'open' : ''} ${isClosing ? 'closing' : ''}`}
-        >
-          <div
-            className={`order-list__details-inner ${isClosing ? 'closing' : ''}`}
-            onTransitionEnd={handleInnerTransitionEnd}
-          >
-            {selectedOrder && (
-              <OrderDetails
-                order={selectedOrder}
-                isOpen={!isClosing}
-                onClose={handleClose}
-                dictOrderDetails={dict.orderDetails}
-                locale={locale}
-              />
-            )}
+            <div className="order-list__dots">
+              <span />
+              <span />
+              <span />
+            </div>
           </div>
         </div>
-      </div>
-      <Pagination page={page} total={total} pageSize={pageSize} onPageChange={handlePageChange} />
+      ) : (
+        <>
+          <div className={`order-list ${isOpen ? 'order-list--open' : ''}`}>
+            {paginatedData.length === 0 && (
+              <div className="order-list__empty">{dict.page.empty}</div>
+            )}
+
+            <div className="order-list__items">
+              {paginatedData.map((order) => (
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  dictOrderCard={dict.orderCard}
+                  locale={locale}
+                  isSelected={selectedOrderId === order.id}
+                  isCompact={isOpen}
+                  total={order.total}
+                  onBack={handleClose}
+                  onSelect={() => dispatch(setSelectedOrder(order.id))}
+                />
+              ))}
+            </div>
+
+            <div
+              className={`order-list__details ${isOpen && !isClosing ? 'open' : ''} ${
+                isClosing ? 'closing' : ''
+              }`}
+            >
+              <div
+                className={`order-list__details-inner ${isClosing ? 'closing' : ''}`}
+                onTransitionEnd={handleInnerTransitionEnd}
+              >
+                {selectedOrder && (
+                  <OrderDetails
+                    order={selectedOrder}
+                    isOpen={!isClosing}
+                    onClose={handleClose}
+                    dictOrderDetails={dict.orderDetails}
+                    locale={locale}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+
+          <Pagination
+            page={page}
+            total={total}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
     </section>
   )
 }
