@@ -8,7 +8,9 @@ export const getSocket = (): Socket => {
   if (!globalThis.__SOCKET__) {
     globalThis.__SOCKET__ = io({
       path: '/socket.io',
+      transports: ['websocket'],
       withCredentials: true,
+      autoConnect: false,
     })
   }
 
