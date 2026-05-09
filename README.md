@@ -342,7 +342,7 @@ backend/
 ##  Database
 
 Schema provided in `.mwb` format
-Location: `/db/schema.mwb`
+Location: `/db/stock-management-schema.mwb`
 
 ---
 
